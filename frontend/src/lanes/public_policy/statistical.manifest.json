@@ -1,0 +1,632 @@
+{
+  "lane_id": "public_policy",
+  "version": "0.1",
+  "fields": [
+    {
+      "id": "run.run_seed",
+      "label": "Run seed",
+      "kind": "integer",
+      "control": "numeric",
+      "default": 4096,
+      "min": 0,
+      "max": 2147483647,
+      "step": 1,
+      "description": "Master seed for deterministic public-policy sampling.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Changing this reseeds the run without changing the public policy scenario."
+      },
+      "provenance": [
+        "operator"
+      ],
+      "why_it_matters": "Controls Run seed for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "run.run_seed",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "numeric"
+      ],
+      "affects": [
+        "sampling",
+        "comparison"
+      ]
+    },
+    {
+      "id": "run.ensemble_n",
+      "label": "Ensemble size",
+      "kind": "integer",
+      "control": "slider_number",
+      "default": 5,
+      "min": 1,
+      "max": 80,
+      "step": 1,
+      "description": "Number of independent civic-response passes.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Higher values improve stability and increase runtime."
+      },
+      "provenance": [
+        "operator",
+        "preflight_meter"
+      ],
+      "why_it_matters": "Controls Ensemble size for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "run.ensemble_n",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "affects": [
+        "sampling",
+        "run-behavior",
+        "comparison"
+      ]
+    },
+    {
+      "id": "run.drift_horizon_rounds",
+      "label": "Interaction rounds",
+      "kind": "integer",
+      "control": "slider_number",
+      "default": 16,
+      "min": 1,
+      "max": 120,
+      "step": 1,
+      "description": "Maximum simulated interaction rounds per public stakeholder cohort.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Longer runs expose slower media, advocacy, and comment-cycle risks."
+      },
+      "provenance": [
+        "operator",
+        "preflight_meter"
+      ],
+      "why_it_matters": "Controls Interaction rounds for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "run.drift_horizon_rounds",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "affects": [
+        "run-behavior",
+        "comparison"
+      ]
+    },
+    {
+      "id": "cohort.active_hours",
+      "label": "Active hours",
+      "kind": "active_hours",
+      "control": "active_hours_grid",
+      "default": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "description": "Local hours during which public-policy agents can react.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Constrains civic timing patterns without creating results."
+      },
+      "provenance": [
+        "operator"
+      ],
+      "why_it_matters": "Controls Active hours for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "cohort.active_hours",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "grid",
+        "numeric"
+      ],
+      "affects": [
+        "run-behavior",
+        "timing"
+      ]
+    },
+    {
+      "id": "run.response_temperature",
+      "label": "Response variance",
+      "kind": "number",
+      "control": "slider_number",
+      "default": 0.7,
+      "min": 0,
+      "max": 2,
+      "step": 0.05,
+      "description": "Sampling temperature for public stakeholder reactions.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Lower values are steadier; higher values explore wider failure modes."
+      },
+      "provenance": [
+        "operator"
+      ],
+      "why_it_matters": "Controls Response variance for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "run.response_temperature",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "affects": [
+        "sampling",
+        "llm-behavior"
+      ]
+    },
+    {
+      "id": "run.persona_salts",
+      "label": "Stakeholder salts",
+      "kind": "salt_map",
+      "control": "key_value",
+      "default": {
+        "constituents": "public-default",
+        "advocacy": "public-default",
+        "media": "public-default",
+        "regulators": "public-default"
+      },
+      "description": "Optional deterministic salts for stakeholder-level variation.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Use when comparing runs while preserving cohort identities."
+      },
+      "provenance": [
+        "operator"
+      ],
+      "why_it_matters": "Controls Stakeholder salts for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "run.persona_salts",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "map"
+      ],
+      "affects": [
+        "sampling",
+        "comparison"
+      ]
+    },
+    {
+      "id": "cohort.priors.attached_priors_id",
+      "label": "Prior bundle",
+      "kind": "text",
+      "control": "text",
+      "default": "public_policy_default_priors_v0",
+      "description": "Identifier for the public-policy prior bundle applied to the run.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Changes assumptions used before any simulated response is observed."
+      },
+      "provenance": [
+        "registry"
+      ],
+      "why_it_matters": "Controls Prior bundle for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "cohort.priors.attached_priors_id",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "text"
+      ],
+      "affects": [
+        "priors",
+        "run-behavior"
+      ]
+    },
+    {
+      "id": "report.hypothesis_tag_allowlist",
+      "label": "Claim tag allowlist",
+      "kind": "multi_select",
+      "control": "checkbox_group",
+      "default": [
+        "source_grounded",
+        "simulated_observation",
+        "inference",
+        "assumption",
+        "requires_validation"
+      ],
+      "description": "Claim provenance tags the public-policy report is allowed to emit.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Keeps report language honest about simulated versus sourced claims."
+      },
+      "provenance": [
+        "platform_taxonomy"
+      ],
+      "options": [
+        {
+          "value": "source_grounded",
+          "label": "Source grounded"
+        },
+        {
+          "value": "simulated_observation",
+          "label": "Simulated observation"
+        },
+        {
+          "value": "inference",
+          "label": "Inference"
+        },
+        {
+          "value": "assumption",
+          "label": "Assumption"
+        },
+        {
+          "value": "requires_validation",
+          "label": "Requires validation"
+        }
+      ],
+      "why_it_matters": "Controls Claim tag allowlist for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "report.hypothesis_tag_allowlist",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "multi_select"
+      ],
+      "affects": [
+        "report-claims",
+        "policy"
+      ]
+    },
+    {
+      "id": "manifest.validity_allowlist",
+      "label": "Validity flag allowlist",
+      "kind": "multi_select",
+      "control": "checkbox_group",
+      "default": [
+        "monte_carlo_coverage",
+        "survivorship_or_cohort_gap",
+        "selection_axis"
+      ],
+      "description": "Methodological validity flags allowed in public-policy reports.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Limits validity annotations to flags the lane can substantiate."
+      },
+      "provenance": [
+        "platform_taxonomy"
+      ],
+      "options": [
+        {
+          "value": "power_law_tail",
+          "label": "Power-law tail"
+        },
+        {
+          "value": "monte_carlo_coverage",
+          "label": "Monte Carlo coverage"
+        },
+        {
+          "value": "survivorship_or_cohort_gap",
+          "label": "Cohort gap"
+        },
+        {
+          "value": "observer_effect",
+          "label": "Observer effect"
+        },
+        {
+          "value": "simpson_aggregate_disagreement",
+          "label": "Aggregate disagreement"
+        },
+        {
+          "value": "mean_reversion",
+          "label": "Mean reversion"
+        },
+        {
+          "value": "utility_curve",
+          "label": "Utility curve"
+        },
+        {
+          "value": "confirmation_bias",
+          "label": "Confirmation bias"
+        },
+        {
+          "value": "selection_axis",
+          "label": "Selection axis"
+        }
+      ],
+      "why_it_matters": "Controls Validity flag allowlist for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "manifest.validity_allowlist",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "multi_select"
+      ],
+      "affects": [
+        "validity",
+        "analysis"
+      ]
+    },
+    {
+      "id": "cohort.drift.axis",
+      "label": "Policy drift axis",
+      "kind": "choice",
+      "control": "select",
+      "default": "public_trust",
+      "description": "Public-policy dimension to vary during sensitivity review.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Identifies which public assumption a later rerun should perturb."
+      },
+      "provenance": [
+        "operator"
+      ],
+      "applies_to": [
+        "public_policy"
+      ],
+      "options": [
+        {
+          "value": "public_trust",
+          "label": "Public trust"
+        },
+        {
+          "value": "implementation_burden",
+          "label": "Implementation burden"
+        },
+        {
+          "value": "jurisdictional_conflict",
+          "label": "Jurisdictional conflict"
+        },
+        {
+          "value": "media_salience",
+          "label": "Media salience"
+        }
+      ],
+      "why_it_matters": "Controls Policy drift axis for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "cohort.drift.axis",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "select"
+      ],
+      "affects": [
+        "run-behavior",
+        "analysis"
+      ]
+    },
+    {
+      "id": "variant.counterfactual_axis",
+      "label": "Counterfactual axis",
+      "kind": "choice",
+      "control": "select",
+      "default": "public_comment_window",
+      "description": "Public-policy counterfactual dimension for variant lineage.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Records the intended counterfactual; it does not execute one by itself."
+      },
+      "provenance": [
+        "operator"
+      ],
+      "applies_to": [
+        "public_policy"
+      ],
+      "options": [
+        {
+          "value": "public_comment_window",
+          "label": "Comment window"
+        },
+        {
+          "value": "consultation_depth",
+          "label": "Consultation depth"
+        },
+        {
+          "value": "media_briefing",
+          "label": "Media briefing"
+        },
+        {
+          "value": "implementation_timeline",
+          "label": "Implementation timeline"
+        }
+      ],
+      "why_it_matters": "Controls Counterfactual axis for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "variant.counterfactual_axis",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "select"
+      ],
+      "affects": [
+        "comparison",
+        "analysis"
+      ]
+    },
+    {
+      "id": "variant.sensitivity_metric",
+      "label": "Sensitivity metric",
+      "kind": "choice",
+      "control": "select",
+      "default": "public_trust",
+      "description": "Primary metric for public-policy sensitivity summaries.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Controls labeling and comparison focus for later analysis artifacts."
+      },
+      "provenance": [
+        "operator"
+      ],
+      "applies_to": [
+        "public_policy"
+      ],
+      "options": [
+        {
+          "value": "public_trust",
+          "label": "Public trust"
+        },
+        {
+          "value": "comment_opposition",
+          "label": "Comment opposition"
+        },
+        {
+          "value": "media_salience",
+          "label": "Media salience"
+        },
+        {
+          "value": "regulatory_friction",
+          "label": "Regulatory friction"
+        }
+      ],
+      "why_it_matters": "Controls Sensitivity metric for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "variant.sensitivity_metric",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "select"
+      ],
+      "affects": [
+        "comparison",
+        "analysis"
+      ]
+    },
+    {
+      "id": "manifest.uncertainty_band",
+      "label": "Uncertainty band",
+      "kind": "number",
+      "control": "slider_number",
+      "default": 0.25,
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "description": "Categorical uncertainty tolerance used when bucketing findings.",
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "Higher values widen advisory bands; no calibrated probability is claimed."
+      },
+      "provenance": [
+        "operator"
+      ],
+      "applies_to": [
+        "public_policy"
+      ],
+      "why_it_matters": "Controls Uncertainty band for deterministic RawFish workbench comparison without inventing findings.",
+      "citation_key": "manifest.uncertainty_band",
+      "lane_applicability": [
+        "public_policy"
+      ],
+      "lock_supported": true,
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "affects": [
+        "validity",
+        "analysis"
+      ]
+    }
+  ],
+  "impact_model": {
+    "source": "runSurrogateExplainer",
+    "fallback": "no impact preview available"
+  },
+  "citation_policy": {
+    "required": true,
+    "table": "public_policy_statistical_v0"
+  },
+  "provenance_policy": {
+    "allowed": [
+      "user-set",
+      "manifest-default",
+      "inferred-from-prior",
+      "sampled",
+      "inferred-from-parseScenario"
+    ]
+  }
+}

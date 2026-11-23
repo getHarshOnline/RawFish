@@ -1,0 +1,137 @@
+persona: policy
+scope: internal_org
+title: "Four-day in-office return mandate at a 1500-person hybrid software company"
+summary: >
+  Synthesized scenario. A 1500-person software company with three offices
+  (a tier-1 city HQ, a tier-2 city satellite, and a remote-by-contract
+  cohort spread across six time zones) announces a four-day in-office
+  return mandate effective in 90 days. Caregivers and junior hires were
+  hired during a remote-first window. Goal: surface retention bottoms and
+  enforcement failure modes before the all-hands announcement.
+jurisdiction: "Internal HR policy; jurisdiction varies by employee location"
+seed_text: |
+  All-hands memo draft:
+
+  Effective 2026-10-01, all employees designated as hybrid must be present
+  in their assigned office four days per week, Monday through Thursday.
+  Friday remains flexible. Employees on a remote-by-contract addendum are
+  unaffected for the duration of their current contract; renewal terms will
+  be revisited individually.
+
+  Rationale (as stated to employees): collaboration density, mentorship
+  for engineers under 3 years tenure, and faster decision cycles.
+
+  Exceptions: documented caregiving constraints and ADA accommodations
+  follow the existing process. Managers may grant up to 4 remote days per
+  month at their discretion.
+
+  Enforcement: badge data reviewed monthly by HR ops. Three consecutive
+  months below threshold trigger a manager conversation; six months
+  trigger a formal PIP.
+stress_question: "Which segments quit first, and which enforcement steps backfire?"
+clauses:
+  - clause_id: c1
+    text: "Four days in office, Monday through Thursday, effective 2026-10-01."
+    affects: [employee_cohort, manager_role, exiting_employee, slack_channel]
+  - clause_id: c2
+    text: "Manager-discretion remote days capped at 4 per month."
+    affects: [manager_role, employee_cohort, hr_ops]
+  - clause_id: c3
+    text: "Badge-data review monthly; PIP after six months of non-compliance."
+    affects: [employee_cohort, hr_ops, legal_counsel]
+stakeholders:
+  - segment_id: s_junior
+    name: "Junior IC engineers hired during remote-first window"
+    type: employee_cohort
+    interests: ["career growth", "mentorship", "predictable rent"]
+    incentives: ["compliance protects probation"]
+    constraints: ["leases signed far from HQ", "no in-office routine ever established"]
+    likely_support_reasons: ["genuine mentorship access"]
+    likely_opposition_reasons: ["commute cost and lease lock-in"]
+    information_channels: ["slack_channel", "manager 1:1s", "glassdoor"]
+    influence_level: 2
+    vulnerability_level: 5
+    compliance_propensity: 4
+    trust_level: 3
+    mobilization_capacity: 3
+    what_changes_their_mind:
+      - "a 6-month commute stipend that covers actual cost"
+      - "a relocation grant with no clawback clause"
+  - segment_id: s_senior
+    name: "Senior IC engineers with caregiving constraints"
+    type: employee_cohort
+    interests: ["preserve current logistics", "no career penalty for accommodation"]
+    incentives: ["existing exception process for ADA/caregiving"]
+    constraints: ["school pickup windows, eldercare schedules"]
+    likely_support_reasons: ["exceptions land cleanly for them"]
+    likely_opposition_reasons: ["exception process leaks to manager and shapes perf review"]
+    information_channels: ["hr_ops portal", "private slack groups"]
+    influence_level: 4
+    vulnerability_level: 4
+    compliance_propensity: 2
+    trust_level: 2
+    mobilization_capacity: 3
+    what_changes_their_mind:
+      - "a written guarantee that exceptions are invisible to perf calibration"
+  - segment_id: s_managers
+    name: "Engineering managers (front line)"
+    type: manager_role
+    interests: ["retain their best ICs", "hit delivery commitments"]
+    incentives: ["discretionary 4-day allowance buys them flexibility"]
+    constraints: ["badge-data review puts them in the enforcer role"]
+    likely_support_reasons: ["density helps with new-hire ramp"]
+    likely_opposition_reasons: ["forced into PIPs for their top performers"]
+    information_channels: ["manager forum", "skip-levels"]
+    influence_level: 4
+    vulnerability_level: 3
+    compliance_propensity: 3
+    trust_level: 3
+    mobilization_capacity: 4
+    what_changes_their_mind:
+      - "headcount backfill guaranteed at 1:1 for attrition above a threshold"
+  - segment_id: s_exec
+    name: "Executive team (sponsors of the mandate)"
+    type: executive_team
+    interests: ["culture signal", "perceived productivity"]
+    incentives: ["consistency with peer companies"]
+    constraints: ["board pressure on real-estate utilisation"]
+    likely_support_reasons: ["it's their mandate"]
+    likely_opposition_reasons: ["a Q1 attrition spike would be visible to the board"]
+    information_channels: ["all-hands stage", "board updates"]
+    influence_level: 5
+    vulnerability_level: 2
+    compliance_propensity: 5
+    trust_level: 4
+    mobilization_capacity: 4
+    what_changes_their_mind:
+      - "preliminary attrition projections from HR ops exceed an internal threshold"
+  - segment_id: s_hrops
+    name: "HR operations team (executors)"
+    type: hr_ops
+    interests: ["clean policy text", "defensible enforcement"]
+    incentives: ["fewer escalations to legal"]
+    constraints: ["badge data is noisy across the satellite office"]
+    likely_support_reasons: ["clear rules reduce ad-hoc decisions"]
+    likely_opposition_reasons: ["badge-data review across multiple jurisdictions raises privacy review"]
+    information_channels: ["hr_ops portal", "legal_counsel briefings"]
+    influence_level: 3
+    vulnerability_level: 2
+    compliance_propensity: 4
+    trust_level: 4
+    mobilization_capacity: 2
+    what_changes_their_mind:
+      - "legal counsel flags the badge-data pipeline as failing privacy review in two jurisdictions"
+assumptions:
+  - "Existing remote-by-contract addendums are honoured through current term"
+  - "Badge data is collected lawfully in all three office locations"
+  - "The exception process for caregiving and ADA is unchanged in text"
+success_criteria:
+  - "Voluntary attrition over the 6 months post-announcement stays within 2 percentage points of trailing baseline"
+  - "Fewer than 5% of employees enter the PIP-track enforcement path in the first year"
+  - "Glassdoor sentiment trend remains within one standard deviation of baseline"
+failure_modes_to_watch:
+  - "Senior caregivers leave first, taking institutional knowledge with them"
+  - "Manager discretion creates visible inequity across teams and shows up in engagement survey"
+  - "Badge-data review is challenged on privacy grounds in the satellite-office jurisdiction"
+  - "PIP track is perceived as a layoff proxy and triggers an external press cycle"
+  - "Junior-hire cohort churns silently and the hiring pipeline cannot backfill at parity"

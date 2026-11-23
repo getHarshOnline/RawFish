@@ -1,0 +1,59 @@
+.git
+.github
+.gitignore
+.cursor
+.claude
+.DS_Store
+.idea
+.vscode
+
+# Environment files — mirror .gitignore patterns. Match every
+# .env / .env.* variant (root, frontend, backend) so secrets never
+# enter the build context, but keep the committed .env.example.
+.env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Node
+node_modules
+frontend/node_modules
+
+# Python
+backend/.venv
+.venv
+.python-version
+__pycache__
+**/__pycache__
+*.pyc
+**/*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.pyright
+.coverage
+.coverage*
+htmlcov
+
+# Frontend build / test artefacts
+frontend/dist
+frontend/.vite
+frontend/coverage
+coverage
+
+# Backend operational state / uploads / sim outputs (per-deployment, not source)
+backend/uploads
+backend/data
+backend/logs
+backend/.idempotency
+
+# Logs
+*.log
+
+# Docker-mounted data
+data

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "source_documents": [
+    "README.md",
+    "docs/POLICY_PRODUCT_SPEC.md",
+    "docs/RAWFISH_UI_CONTRACT.md"
+  ],
+  "legacy_decision_count_labels_allowed": false,
+  "active_registry_kinds": [
+    "lane",
+    "cohort_pack",
+    "connector",
+    "evaluation",
+    "statistical_manifest",
+    "resolved_configuration",
+    "statistical_variant"
+  ],
+  "non_registry_concepts": [
+    "preset",
+    "memory_mode",
+    "claim_label",
+    "analysis_panel",
+    "history"
+  ]
+}

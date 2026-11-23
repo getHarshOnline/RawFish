@@ -1,0 +1,931 @@
+/* ==========================================================================
+   RawFish design system — SINGLE SOURCE OF TRUTH
+   (RAWFISH_UI_CONTRACT.md · IA + Design Language v2, boards 01–12)
+
+   Screens declare LAYOUT only (grid/flex/gap/width via --s*).
+   Screens never declare PAINT (color, background, border, font, shadow,
+   radius). Paint lives here — tokens first, then primitives (.rf-*),
+   then the fixed product composition classes screens compose.
+   Enforced by process/check_ui_contract.sh + check_design_system_css.py.
+
+   Laws (board 11): two chromatic tokens · hierarchy is opacity · mono is
+   machine, sans is human · paint from tokens, type from roles · hairline,
+   square, flat · state is a variant, never a caption · a disabled control
+   shows its reason · one concept, one control, once · text never touches
+   text · evidence is a link and a flash.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/NotoSans-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/JetBrainsMono-latin.woff2") format("woff2");
+}
+
+:root {
+  /* chromatic — the ONLY two, plus the :target flash (board 08) */
+  --accent: #FF5722;   /* active + primary action — nothing else */
+  --danger: #B23A2E;   /* error + halt — nothing else */
+  --target: #FFE600;   /* :target flash only · decays 900ms */
+
+  /* surfaces + ink */
+  --ink: #141410;
+  --paper: #ffffff;
+  --bg: #f1f1ee;
+  --line: rgba(20,20,15,0.14);
+  --line-strong: rgba(20,20,15,0.30);
+
+  /* text tiers — hierarchy is opacity, never a new grey */
+  --t1: #141410;
+  --t2: rgba(20,20,16,0.60);
+  --t3: rgba(20,20,16,0.42);
+  --t4: rgba(20,20,16,0.26);
+
+  /* families */
+  --sans: 'Noto Sans', system-ui, sans-serif;  /* human text */
+  --mono: 'JetBrains Mono', monospace;         /* machine text only */
+
+  /* type roles — the only legal font declarations */
+  --f-display: 600 23px/1 var(--sans);       /* step title */
+  --f-title:   600 15px/1.2 var(--sans);     /* card/panel title */
+  --f-body:    400 13.5px/1.55 var(--sans);
+  --f-btn:     600 12px/1 var(--sans);
+  --f-label:   600 10px/1 var(--mono);       /* uppercase, letter-spacing 1px */
+  --f-value:   600 12px/1 var(--mono);
+  --f-num:     600 30px/1 var(--mono);       /* stat numerals */
+
+  /* spacing scale */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 26px;
+
+  /* derived tints — opacity variants of the tokens above ONLY (zero new
+     chroma; same rule as --t2..--t4). On-ink text mirrors the tiers. */
+  --pt1: var(--paper);
+  --pt2: color-mix(in srgb, var(--paper) 74%, transparent);
+  --pt3: color-mix(in srgb, var(--paper) 52%, transparent);
+  --pt4: color-mix(in srgb, var(--paper) 36%, transparent);
+  --line-inv: color-mix(in srgb, var(--paper) 14%, transparent);
+  --line-inv-strong: color-mix(in srgb, var(--paper) 30%, transparent);
+  --danger-inv: color-mix(in srgb, var(--danger) 52%, var(--paper));
+  --accent-dim: color-mix(in srgb, var(--accent) 35%, transparent);
+  --ink-dim: color-mix(in srgb, var(--ink) 60%, transparent);
+
+  /* structural dims — layout, not paint */
+  --topbar-h: 44px;
+  --console-h: 34px;
+  --control-h: 34px;
+  --dock-w: 484px;
+  --dock-w-wide: 720px;
+  --measure: 64ch;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font: var(--f-body);
+  color: var(--t1);
+  background: var(--bg);
+}
+
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+::selection { background: var(--accent); color: var(--paper); }
+
+/* motion law (board 08): 120ms opacity / border / color only.
+   Nothing slides, bounces or scales. */
+.rf-btn, .rf-chip, .rf-card, .rf-spine__step, .rf-enum button,
+.rf-sheet__row, .rf-console__toggle {
+  transition: opacity 120ms, border-color 120ms, color 120ms, background-color 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* --------------------------------------------------------------------------
+   :target flash — the only yellow in the product · decays 900ms (board 08)
+   -------------------------------------------------------------------------- */
+@keyframes rf-target-decay {
+  from { background-color: var(--target); }
+  to { background-color: transparent; }
+}
+
+:target, .rf-flash { animation: rf-target-decay 900ms ease-out 1; }
+
+/* --------------------------------------------------------------------------
+   hr easter egg — a section break is text, not a line
+   -------------------------------------------------------------------------- */
+hr {
+  border: 0;
+  margin: var(--s4) 0;
+  color: var(--t4);
+  font: var(--f-value);
+}
+hr::before { content: '/////'; }
+hr::after { content: attr(data-content) '/////'; }
+
+/* ==========================================================================
+   PRIMITIVES — each exists once, is imported everywhere, owns its spacing.
+   A new visual need extends a primitive here — never inline-styles a screen.
+   ========================================================================== */
+
+/* --- Label / machine meta ------------------------------------------------ */
+.rf-label {
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 1px;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.rf-label--danger { color: var(--danger); }
+.rf-label--accent { color: var(--accent); }
+
+/* machine text line — lowercase mono, · separators (board 12) */
+.rf-meta {
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+  text-transform: none;
+}
+.rf-meta--value { color: var(--t2); }
+
+/* --- Panel — optional header (label + meta) + body + footer -------------- */
+.rf-panel {
+  min-width: 0;
+  color: var(--t1);
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  box-shadow: none;
+}
+.rf-panel--hairline { border-color: var(--line); }
+.rf-panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+  border-block-end: 1px solid var(--line);
+}
+.rf-panel__body {
+  display: grid;
+  gap: var(--s3);
+  align-content: start;
+  padding: var(--s4);
+}
+.rf-panel__body--flush { padding: 0; gap: 0; }
+.rf-panel__foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  padding: var(--s3) var(--s4);
+  border-block-start: 1px solid var(--line);
+}
+.rf-panel__foot > .spacer { flex: 1; }
+
+/* --- Card — panel without header; also the stat card (board 10) ---------- */
+.rf-card {
+  display: grid;
+  gap: var(--s2);
+  align-content: start;
+  min-width: 0;
+  padding: var(--s4);
+  text-align: start;
+  color: var(--t1);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+}
+button.rf-card:disabled { cursor: not-allowed; color: var(--t4); }
+.rf-card--active { border-color: var(--accent); }
+
+.rf-metric {
+  display: grid;
+  gap: var(--s2);
+  min-width: 0;
+  padding: var(--s4);
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.rf-metric strong { font: var(--f-num); }
+.rf-metric span {
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+/* --- Chip — one padding; caution is a glyph, not a bg (board 10) --------- */
+.rf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--t3);
+  background: var(--paper);
+  font: var(--f-label);
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  text-transform: none;
+  white-space: nowrap;
+}
+button.rf-chip { cursor: pointer; }
+button.rf-chip:disabled { color: var(--t4); cursor: not-allowed; }
+.rf-chip--selected { border-color: var(--line-strong); color: var(--t1); }
+.rf-chip--accent { border-color: var(--accent); color: var(--accent); }
+.rf-chip--ink { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.rf-chip__dot { inline-size: 6px; block-size: 6px; background: var(--accent); }
+.rf-chip--caution { color: var(--t2); }
+.rf-chip--caution::before { content: "△"; color: var(--danger); }
+.rf-chip--ok { color: var(--t2); }
+.rf-chip--ok::before { content: "✓"; color: var(--accent); }
+.rf-chip--pending { color: var(--t3); }
+.rf-chip--pending::before { content: "·"; color: var(--t3); }
+
+/* --- Button — roles: primary | default | quiet. Disabled carries a reason
+       BESIDE it (chip), never inside the label (board 09/11). ------------- */
+.rf-btnset {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  min-width: 0;
+}
+.rf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  min-block-size: var(--control-h);
+  padding: var(--s2) var(--s4);
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  color: var(--t1);
+  background: var(--paper);
+  font: var(--f-btn);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  box-shadow: none;
+}
+.rf-btn--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--paper);
+}
+.rf-btn--quiet {
+  min-block-size: 0;
+  padding: 6px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: var(--f-label);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.rf-btn--danger { border-color: var(--danger); color: var(--danger); background: var(--paper); }
+.rf-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.rf-btn--block { inline-size: 100%; }
+
+/* --- LabelRow — the ONLY caption + value form; the gap is owned ---------- */
+.rf-labelrow {
+  display: grid;
+  grid-template-columns: minmax(88px, auto) 1fr;
+  column-gap: var(--s3);
+  align-items: baseline;
+  min-width: 0;
+}
+.rf-labelrow__label {
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 1px;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.rf-labelrow__value {
+  font: var(--f-value);
+  line-height: 1.5;
+  color: var(--t1);
+  overflow-wrap: anywhere;
+}
+.rf-labelrow--dim .rf-labelrow__value { color: var(--t2); }
+.rf-labelrow--danger .rf-labelrow__value { color: var(--danger); }
+
+/* --- StepHeading — identical geometry on all 6 steps (board 10) ---------- */
+.rf-heading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+  min-block-size: 26px;
+  min-width: 0;
+}
+.rf-heading__num { flex: none; color: var(--accent); font: var(--f-value); }
+.rf-heading h1 { margin: 0; font: var(--f-display); }
+.rf-heading__hint {
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.rf-heading__aside { margin-inline-start: auto; display: inline-flex; }
+
+/* --- StepSpine — done | active | reachable | locked · halted.
+       Locked = dimmed + title reason. Strikethrough is banned. ------------ */
+.rf-spine { display: flex; align-items: stretch; flex: 1; min-width: 0; }
+.rf-spine__step {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 var(--s3);
+  border: 0;
+  border-inline-end: 1px solid var(--line);
+  border-block-end: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--t2);
+  font: var(--f-btn);
+  white-space: nowrap;
+}
+.rf-spine__num { font: var(--f-label); letter-spacing: 1px; color: var(--t3); }
+.rf-spine__step--done { color: var(--t1); }
+.rf-spine__step--active { color: var(--accent); border-block-end-color: var(--accent); }
+.rf-spine__step--active .rf-spine__num { color: var(--accent); }
+.rf-spine__step--halted { color: var(--danger); border-block-end-color: var(--danger); }
+.rf-spine__step--halted .rf-spine__num { color: var(--danger); }
+.rf-spine__step--locked, .rf-spine__step--locked .rf-spine__num { color: var(--t4); }
+.rf-spine__step--locked { cursor: not-allowed; }
+
+/* --- Fields (board 09) — the right control for the shape of the data ----- */
+.rf-field { display: grid; gap: var(--s2); min-width: 0; }
+.rf-field > .rf-field__label {
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 1px;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+.rf-field textarea,
+.rf-field input[type="text"],
+.rf-field select {
+  inline-size: 100%;
+  padding: var(--s2) var(--s3);
+  border: 1px solid var(--line-strong);
+  border-block-end-width: 2px;
+  border-block-end-color: var(--line-strong);
+  border-radius: 0;
+  color: var(--t1);
+  background: var(--paper);
+  font: var(--f-body);
+}
+.rf-field textarea { resize: vertical; line-height: 1.55; }
+.rf-field textarea:focus-visible,
+.rf-field input:focus-visible,
+.rf-field select:focus-visible {
+  outline: none;
+  border-block-end-color: var(--accent);
+}
+.rf-input--machine { font: var(--f-value) !important; line-height: 1.4 !important; }
+.rf-field__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s3);
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  text-transform: none;
+}
+.rf-field--invalid textarea,
+.rf-field--invalid input,
+.rf-field--invalid select { border-color: var(--danger); }
+.rf-field__error {
+  color: var(--danger);
+  font: var(--f-label);
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+  text-transform: none;
+}
+/* frozen — recipe locked; value keeps no input chrome (board 09) */
+.rf-frozen { display: flex; align-items: center; gap: var(--s2); }
+.rf-frozen__value {
+  padding: var(--s2) var(--s3);
+  background: var(--bg);
+  color: var(--t2);
+  font: var(--f-value);
+  line-height: 1.4;
+}
+
+/* number field — typeable + square steppers · bounds always visible */
+.rf-numberfield { display: flex; align-items: center; gap: var(--s3); }
+.rf-numberfield__box {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+}
+.rf-numberfield__box button {
+  inline-size: 30px;
+  border: 0;
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--t2);
+  font: var(--f-value);
+}
+.rf-numberfield__box button:disabled { color: var(--t4); cursor: not-allowed; }
+.rf-numberfield__box input {
+  inline-size: 64px;
+  border: 0;
+  border-inline: 1px solid var(--line);
+  border-radius: 0;
+  padding: var(--s2) 0;
+  text-align: center;
+  color: var(--t1);
+  background: var(--paper);
+  font: var(--f-value);
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.rf-numberfield__box input::-webkit-outer-spin-button,
+.rf-numberfield__box input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+.rf-numberfield__box input:focus-visible { outline: none; border-block-end: 2px solid var(--accent); }
+
+/* enum chips — 2–5 fixed choices · one always selected (board 09) */
+.rf-enum {
+  display: inline-flex;
+  inline-size: max-content;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+}
+.rf-enum button {
+  padding: 7px var(--s3);
+  border: 0;
+  border-inline-start: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--t2);
+  font: var(--f-value);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+.rf-enum button:first-child { border-inline-start: 0; }
+.rf-enum button[aria-checked="true"] { background: var(--ink); color: var(--paper); }
+.rf-enum button:disabled { color: var(--t4); cursor: not-allowed; }
+
+/* slider + value — the number is the source of truth (board 09) */
+.rf-rangepair { display: flex; align-items: center; gap: var(--s3); min-width: 0; }
+.rf-rangepair input[type="range"] {
+  flex: 1;
+  min-inline-size: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  block-size: 5px;
+  border: 0;
+  background: linear-gradient(to right, var(--t1) var(--pct, 0%), var(--line) var(--pct, 0%));
+}
+.rf-rangepair input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  inline-size: 9px;
+  block-size: 14px;
+  border: 1px solid var(--t1);
+  border-radius: 0;
+  background: var(--paper);
+}
+.rf-rangepair input[type="range"]::-moz-range-thumb {
+  inline-size: 9px;
+  block-size: 14px;
+  border: 1px solid var(--t1);
+  border-radius: 0;
+  background: var(--paper);
+}
+.rf-rangepair input[type="number"] {
+  inline-size: 64px;
+  padding: var(--s1) var(--s2);
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  text-align: end;
+  color: var(--t1);
+  background: var(--paper);
+  font: var(--f-value);
+}
+.rf-rangepair input[type="number"]:focus-visible { outline: none; border-block-end-color: var(--accent); }
+
+/* key/value grid + active-hours grid (cohort priors) */
+.rf-kv { display: grid; gap: var(--s2); }
+.rf-kv label { display: grid; grid-template-columns: minmax(96px, auto) 1fr; gap: var(--s3); align-items: center; }
+.rf-kv span { color: var(--t3); font: var(--f-label); letter-spacing: 0.5px; text-transform: none; }
+.rf-kv input {
+  padding: var(--s1) var(--s2);
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--t1);
+  font: var(--f-value);
+}
+.rf-hours { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--s1); }
+.rf-hours button {
+  padding: var(--s1) 0;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 0;
+  text-align: center;
+}
+.rf-hours button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+/* checkbox group */
+.rf-checks { display: grid; gap: var(--s2); }
+.rf-checks label { display: flex; align-items: center; gap: var(--s2); color: var(--t2); font: var(--f-body); line-height: 1.4; }
+.rf-checks input { accent-color: var(--ink); }
+
+/* --- Meter — ink = data · accent = budget / primary only (board 10) ------ */
+.rf-meter { display: grid; gap: 6px; min-width: 0; }
+.rf-meter__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s3); }
+.rf-meter__label {
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.rf-meter__value { color: var(--t2); font: var(--f-value); }
+.rf-meter__value strong { color: var(--t1); font: inherit; }
+.rf-meter__track { block-size: 5px; background: var(--line); }
+.rf-meter--budget .rf-meter__track { block-size: 9px; }
+.rf-meter__fill { display: block; block-size: 100%; background: var(--t1); }
+.rf-meter--budget .rf-meter__fill { background: var(--accent); }
+.rf-meter--over .rf-meter__fill { background: var(--danger); }
+
+/* --- SentimentTrack — −1…+1 · center tick · monochrome (board 10) -------- */
+.rf-sentiment { display: grid; gap: 7px; min-width: 0; }
+.rf-sentiment__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s3); }
+.rf-sentiment__track { position: relative; block-size: 5px; background: var(--line); }
+.rf-sentiment__tick {
+  position: absolute;
+  inset-block: -3px;
+  inset-inline-start: 50%;
+  inline-size: 1px;
+  background: var(--t3);
+}
+.rf-sentiment__marker {
+  position: absolute;
+  inset-block-start: -3px;
+  inline-size: 10px;
+  block-size: 11px;
+  margin-inline-start: -5px;
+  background: var(--paper);
+  border: 2px solid var(--t1);
+}
+
+/* --- Console — 34px status line ↔ expands only while a run streams ------- */
+.rf-console { background: var(--ink); color: var(--paper); min-width: 0; }
+.rf-console__line {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  block-size: var(--console-h);
+  padding: 0 var(--s4);
+}
+.rf-console__sys {
+  color: var(--pt3);
+  font: var(--f-label);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.rf-console__dot { inline-size: 6px; block-size: 6px; background: var(--line-inv-strong); flex: none; }
+.rf-console__dot--live { background: var(--accent); }
+.rf-console__dot--danger { background: var(--danger-inv); }
+.rf-console__text {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--pt2);
+  font: var(--f-value);
+  text-transform: none;
+}
+.rf-console__toggle {
+  border: 0;
+  background: transparent;
+  color: var(--pt3);
+  font: var(--f-label);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: var(--s1);
+}
+.rf-console__log {
+  display: grid;
+  gap: var(--s1);
+  align-content: start;
+  max-block-size: 200px;
+  overflow-y: auto;
+  padding: var(--s2) var(--s4) var(--s3);
+  border-block-start: 1px solid var(--line-inv);
+}
+.rf-console__row {
+  display: grid;
+  grid-template-columns: 60px 88px 1fr;
+  column-gap: var(--s3);
+  align-items: baseline;
+}
+.rf-console__time { color: var(--pt4); font: var(--f-label); letter-spacing: 0; line-height: 1.5; text-transform: none; }
+.rf-console__tag { color: var(--pt3); font: var(--f-label); letter-spacing: 0.5px; line-height: 1.5; text-transform: none; overflow: hidden; text-overflow: ellipsis; }
+.rf-console__tag--accent { color: var(--accent); }
+.rf-console__tag--danger { color: var(--danger-inv); }
+.rf-console__msg { color: var(--pt2); font: var(--f-label); letter-spacing: 0; line-height: 1.5; text-transform: none; overflow-wrap: anywhere; }
+
+/* --- SVG text (D3 graph) — classes are the only legal type inside SVG ---- */
+.rf-svg-label { font: var(--f-label); letter-spacing: 0.5px; }
+.rf-svg-value { font: var(--f-value); }
+
+/* ==========================================================================
+   ZONES (board 03) — Z1 topbar · Z2 stage · Z3 dock · Z4 console
+   ========================================================================== */
+
+.rf-shell {
+  display: grid;
+  grid-template-rows: var(--topbar-h) minmax(0, 1fr) auto;
+  block-size: 100dvh;
+  background: var(--bg);
+}
+
+/* Z1 — brand · 6-step spine · one context line. Nothing else, ever. */
+.rf-z1 {
+  display: flex;
+  align-items: stretch;
+  background: var(--paper);
+  border-block-end: 1px solid var(--line-strong);
+  min-width: 0;
+}
+.rf-z1__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 0 var(--s4);
+  border-inline-end: 1px solid var(--line);
+  color: var(--t1);
+  font: var(--f-label);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rf-z1__brand::before { content: ""; inline-size: 8px; block-size: 8px; background: var(--accent); }
+.rf-z1__ctx {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--s4);
+  border-inline-start: 1px solid var(--line);
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 0.5px;
+  text-transform: none;
+  white-space: nowrap;
+}
+.rf-z1__ctx strong { color: var(--t2); font: inherit; }
+
+/* Z2 — the world is the hero. Mounts at Build, never unmounts. */
+.rf-body { position: relative; display: flex; align-items: stretch; min-block-size: 0; min-width: 0; }
+.rf-z2 {
+  position: relative;
+  flex: 1;
+  min-inline-size: 0;
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--line) 1px, transparent 1px);
+  background-size: 17px 17px;
+}
+
+/* Z3 — the dock owns the active step. 484px; 720px dense; solo on Scenario. */
+.rf-z3 {
+  inline-size: var(--dock-w);
+  flex: none;
+  overflow-y: auto;
+  display: grid;
+  gap: var(--s4);
+  align-content: start;
+  padding: var(--s5);
+  background: var(--bg);
+  border-inline-start: 1px solid var(--line-strong);
+}
+.rf-z3--wide { inline-size: var(--dock-w-wide); }
+.rf-z3--solo {
+  inline-size: min(720px, 100%);
+  margin-inline: auto;
+  border-inline-start: 0;
+}
+
+/* Z4 — machine truth only. The strip is always the console primitive. */
+.rf-z4 { min-width: 0; border-block-start: 1px solid var(--line-strong); }
+
+/* generic dock action row — primary action is always last (board 09) */
+.dock-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s2);
+}
+.dock-actions > .spacer { flex: 1; }
+
+/* readiness strip — chips owned by a flex parent, never inline runs */
+.chip-row { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s2); min-width: 0; }
+
+/* prose inside the dock */
+.dock-prose { margin: 0; max-inline-size: var(--measure); color: var(--t2); font: var(--f-body); }
+.dock-prose strong { color: var(--t1); }
+
+/* ==========================================================================
+   OVERLAYS (board 06) — summoned, filtered, trailed, reversible
+   ========================================================================== */
+.rf-sheet {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: min(560px, 92%);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  background: var(--paper);
+  border-inline-start: 1px solid var(--line-strong);
+  z-index: 30;
+}
+.rf-sheet__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s2) var(--s4);
+  border-block-end: 1px solid var(--line-strong);
+  min-block-size: 40px;
+}
+.rf-sheet__badge {
+  padding: 3px 6px;
+  background: var(--accent);
+  color: var(--paper);
+  font: var(--f-label);
+  letter-spacing: 0.5px;
+}
+.rf-sheet__title {
+  color: var(--t1);
+  font: var(--f-label);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.rf-sheet__nav { margin-inline-start: auto; display: inline-flex; gap: var(--s2); }
+.rf-sheet__trail {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  padding: var(--s2) var(--s4);
+  border-block-end: 1px solid var(--line);
+}
+.rf-sheet__trail-sep { color: var(--t4); font: var(--f-label); }
+.rf-sheet__body {
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  min-width: 0;
+}
+.rf-sheet__row {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) auto;
+  column-gap: var(--s3);
+  align-items: baseline;
+  padding: var(--s2) var(--s4);
+  border: 0;
+  border-block-end: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  text-align: start;
+}
+.rf-sheet__row-tag { color: var(--t3); font: var(--f-label); letter-spacing: 0.5px; line-height: 1.5; text-transform: none; overflow: hidden; text-overflow: ellipsis; }
+.rf-sheet__row-text { color: var(--t2); font: var(--f-body); line-height: 1.5; overflow-wrap: anywhere; }
+.rf-sheet__row-meta { color: var(--t3); font: var(--f-label); letter-spacing: 0; line-height: 1.5; text-transform: none; text-align: end; }
+.rf-sheet__pad { display: grid; gap: var(--s3); align-content: start; padding: var(--s4); }
+.rf-sheet__foot {
+  padding: var(--s2) var(--s4);
+  border-block-start: 1px solid var(--line);
+  color: var(--t3);
+  font: var(--f-label);
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+  text-transform: none;
+}
+
+/* ==========================================================================
+   PRODUCT COMPOSITION — fixed grammar for S0 home + the six step docks.
+   Screens compose these; paint stays here.
+   ========================================================================== */
+
+/* --- S0 · Home ------------------------------------------------------------ */
+.s0 { min-block-size: 100dvh; display: grid; grid-template-rows: var(--topbar-h) 1fr; background: var(--bg); }
+.s0__main {
+  inline-size: min(1160px, calc(100vw - 2 * var(--s6)));
+  margin-inline: auto;
+  padding-block: 44px 72px;
+  display: grid;
+  gap: var(--s6);
+  align-content: start;
+}
+.s0__hero { display: grid; gap: var(--s3); max-inline-size: 760px; }
+.s0__hero h1 { margin: 0; font: var(--f-display); }
+.s0__work {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: var(--s5);
+  align-items: start;
+}
+.seedbox textarea {
+  display: block;
+  inline-size: 100%;
+  min-block-size: 216px;
+  resize: vertical;
+  border: 0;
+  border-block-end: 1px solid var(--line);
+  border-radius: 0;
+  padding: var(--s4);
+  color: var(--t1);
+  background: var(--paper);
+  font: var(--f-body);
+  line-height: 1.6;
+}
+.seedbox textarea:focus-visible { outline: none; border-block-end-color: var(--accent); }
+.lane-rail { display: grid; gap: var(--s3); align-content: start; }
+.rail-title { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); }
+.run-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--s3); }
+.preset-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--s3); }
+.run-card__id { font: var(--f-value); color: var(--t1); overflow-wrap: anywhere; }
+
+/* --- S3 · Cohorts ---------------------------------------------------------- */
+.cohort-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
+.cohort-card { text-align: start; }
+.cohort-card__title { font: var(--f-title); }
+
+/* --- S4 · Preflight — boot sequence --------------------------------------- */
+.boot-row {
+  display: grid;
+  grid-template-columns: 20px 84px 96px 1fr;
+  column-gap: var(--s3);
+  align-items: baseline;
+  padding: var(--s2) 0;
+}
+.boot-row + .boot-row { border-block-start: 1px solid var(--line); }
+.boot-row__num { color: var(--t4); font: var(--f-label); }
+.boot-row__verb { color: var(--t1); font: var(--f-value); }
+.boot-row__state { font: var(--f-label); letter-spacing: 0.5px; text-transform: none; color: var(--t3); }
+.boot-row__state--done { color: var(--t1); }
+.boot-row__state--active { color: var(--accent); }
+.boot-row__note { color: var(--t3); font: var(--f-label); letter-spacing: 0; line-height: 1.5; text-transform: none; }
+
+/* --- S5 · Simulate — timeline feed ----------------------------------------- */
+.feed { display: grid; align-content: start; }
+.feed__row {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  column-gap: var(--s3);
+  align-items: baseline;
+  padding: var(--s2) 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  text-align: start;
+}
+.feed__row + .feed__row { border-block-start: 1px solid var(--line); }
+.feed__tag { color: var(--t3); font: var(--f-label); letter-spacing: 0.5px; line-height: 1.5; text-transform: none; overflow: hidden; text-overflow: ellipsis; }
+.feed__tag--accent { color: var(--accent); }
+.feed__tag--danger { color: var(--danger); }
+.feed__msg { color: var(--t2); font: var(--f-body); line-height: 1.5; overflow-wrap: anywhere; }
+button.feed__row { cursor: pointer; }
+
+/* --- S6 · Findings --------------------------------------------------------- */
+.claim__title { margin: 0; font: var(--f-title); }
+.claim__text { margin: 0; color: var(--t2); font: var(--f-body); }
+.ask-thread { display: grid; gap: var(--s3); align-content: start; }
+.ask-turn { display: grid; grid-template-columns: 64px minmax(0, 1fr); column-gap: var(--s3); align-items: baseline; }
+.ask-turn__role { color: var(--t3); font: var(--f-label); letter-spacing: 0.5px; line-height: 1.6; text-transform: none; }
+.ask-turn__role--agent { color: var(--accent); }
+.ask-turn__text { margin: 0; color: var(--t1); font: var(--f-body); overflow-wrap: anywhere; }
+.ask-turn--user .ask-turn__text { color: var(--t2); }
+
+/* empty / hydrating shell state */
+.shell-empty { display: grid; gap: var(--s3); align-content: center; justify-items: center; padding: var(--s6); }

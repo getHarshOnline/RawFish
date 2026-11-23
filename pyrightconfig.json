@@ -1,0 +1,26 @@
+{
+  "include": [
+    "backend/app",
+    "backend/tests",
+    "backend/scripts"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "backend/.venv",
+    "backend/uploads",
+    "**/node_modules"
+  ],
+  "extraPaths": [
+    "backend",
+    "backend/scripts"
+  ],
+  "venvPath": "backend",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "error",
+  "reportMissingTypeStubs": "none",
+  "reportUnusedImport": "warning",
+  "reportUnusedVariable": "warning",
+  "reportUndefinedVariable": "error"
+}

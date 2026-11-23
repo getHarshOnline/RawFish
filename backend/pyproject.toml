@@ -1,0 +1,78 @@
+[project]
+name = "rawfish-backend"
+version = "0.1.0"
+description = "RawFish - audience-reaction simulator for pre-mortem analysis of content, product, and policy decisions"
+requires-python = ">=3.11,<3.13"
+license = { text = "AGPL-3.0-only" }
+authors = [
+    { name = "RawThoughts Enterprises Private Limited" }
+]
+
+dependencies = [
+    # Core framework
+    "flask>=3.0.0",
+    "flask-cors>=6.0.0",
+    # Production WSGI server; run as one worker with threads so process-local run locks stay coherent.
+    "gunicorn>=21.0.0",
+
+    # LLM-related
+    "openai>=1.0.0",
+    "litellm>=1.74.0",
+
+    # Zep Cloud
+    # Pinned at 3.13.0 (V2 surface). V3 client upgrade gated on the local-first
+    # Graphiti runtime landing — the live Zep cloud path is in deprecation.
+    "zep-cloud==3.13.0",
+
+    # OASIS social media simulation
+    "camel-oasis==0.2.5",
+    "camel-ai==0.2.78",
+
+    # File processing
+    "PyMuPDF>=1.24.0",
+    # Encoding detection (supports text files with non-UTF-8 encodings)
+    "charset-normalizer>=3.0.0",
+    "chardet>=5.0.0",
+
+    # Utility libraries
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0",
+    # YAML scenario fixtures (policy schema loader)
+    "pyyaml>=6.0",
+
+    # The prototype includes Graphiti for its optional local graph-memory
+    # mode. The lock below forces an otherwise conflicting driver pin.
+    "graphiti-core>=0.29,<0.30",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pipreqs>=0.5.0",
+]
+# The store imports Graphiti lazily. Without it, the module still imports
+# and Graphiti initialisation raises GraphitiInitError when selected.
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pyright>=1.1.408",
+]
+
+[tool.uv]
+# The inspected camel-oasis 0.2.5 requires neo4j==5.23.0, while the
+# locked graphiti-core 0.29.2 requires neo4j>=5.26. The override forces
+# 5.23.0 for this prototype. A successful lock or import is not evidence
+# of a supported combination or qualification of the Graphiti profile.
+override-dependencies = [
+    "neo4j==5.23.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]

@@ -1,0 +1,163 @@
+{
+  "preset_id": "policy/disengaged_majority",
+  "description": "Low-salience policy with a 60% disengaged majority. Tests the 'no-one-notices' silent-failure mode where mobilization stays flat and weak signals never aggregate into a backlash.",
+  "persona": "policy",
+  "scope": "public_policy",
+  "region": "US",
+  "expected_risk_tags": [
+    "H-SILENT-FAILURE",
+    "H-LOW-SALIENCE"
+  ],
+  "preset_overrides": {
+    "scenario": {
+      "topic": "Technical policy update with no obvious near-term consumer impact",
+      "drift_horizon_rounds": 10,
+      "run": {
+        "ensemble_n": 5,
+        "tier": "sanity"
+      },
+      "domain_context": {
+        "policy_state": {
+          "salience_baseline": 0.18,
+          "press_pickup_probability": 0.15,
+          "consumer_impact_visibility": "low"
+        }
+      },
+      "assumptions": [
+        "Most exposed citizens do not encounter the policy through news media in the first 10 rounds.",
+        "Implementing agency communicates only through routine channels.",
+        "No advocacy group adopts the issue as a near-term mobilization target."
+      ],
+      "success_criteria": [
+        "Disengaged-majority salience never crosses 0.30 (low-salience invariant holds).",
+        "Wonk-segment opposition does not propagate beyond its own cohort.",
+        "Implementation proceeds without legal or press-driven rollback."
+      ],
+      "failure_modes_to_watch": [
+        "Silent-failure: harm accrues to the disengaged majority without registering in opinion signals.",
+        "Late-cycle salience spike triggered by a single press hit that the model missed."
+      ],
+      "audience_segments": [
+        {
+          "id": "disengaged_majority",
+          "label": "Disengaged majority",
+          "type": "citizen_segment",
+          "weight": 0.6,
+          "trust_level": 3,
+          "influence_level": 1,
+          "vulnerability_level": 2,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 1,
+          "traits": {
+            "attention_budget": 0.1,
+            "ocean": {
+              "openness": 0.4,
+              "conscientiousness": 0.5,
+              "extraversion": 0.5,
+              "agreeableness": 0.5,
+              "neuroticism": 0.5
+            }
+          },
+          "priors": [
+            {
+              "dimension": "salience",
+              "support": "beta",
+              "params": {
+                "alpha": 1.5,
+                "beta": 8.5
+              },
+              "stance": "oppose",
+              "weight": 1.0,
+              "provenance_id": "prov_anes_2024_salience"
+            }
+          ]
+        },
+        {
+          "id": "casually_attentive",
+          "label": "Casually attentive public",
+          "type": "citizen_segment",
+          "weight": 0.25,
+          "trust_level": 3,
+          "influence_level": 2,
+          "vulnerability_level": 3,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 2,
+          "traits": {
+            "attention_budget": 0.35
+          }
+        },
+        {
+          "id": "policy_wonks",
+          "label": "Policy wonks / domain advocates",
+          "type": "civil_society_actor",
+          "weight": 0.15,
+          "trust_level": 4,
+          "influence_level": 4,
+          "vulnerability_level": 2,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 4,
+          "traits": {
+            "attention_budget": 0.85,
+            "ocean": {
+              "openness": 0.7,
+              "conscientiousness": 0.75,
+              "extraversion": 0.5,
+              "agreeableness": 0.55,
+              "neuroticism": 0.4
+            }
+          }
+        }
+      ],
+      "trust_baseline": 0.55,
+      "drift_sensitivity_preset": "conservative"
+    },
+    "provenance": [
+      {
+        "id": "prov_anes_2024_salience",
+        "source_type": "survey",
+        "source_url": "https://electionstudies.org/data-center/2024-time-series-study/",
+        "applied_to_segments": [
+          "disengaged_majority"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "American National Election Studies, 2024 Time Series Study (salience module)."
+      },
+      {
+        "id": "prov_regulations_gov_us_filing",
+        "source_type": "regulatory_filing",
+        "source_url": "https://www.regulations.gov/document/example-low-salience-rule",
+        "applied_to_segments": [
+          "policy_wonks"
+        ],
+        "license_class": "public_domain"
+      },
+      {
+        "id": "prov_pew_2024_attention_budgets",
+        "source_type": "survey",
+        "source_url": "https://www.pewresearch.org/politics/2024/attention-budgets/",
+        "applied_to_segments": [
+          "casually_attentive"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Pew Research Center, 2024 Attention-Budget cross-tab."
+      },
+      {
+        "id": "prov_user_upload_agency_briefing",
+        "source_type": "user_upload",
+        "applied_to_segments": [
+          "policy_wonks"
+        ],
+        "license_class": "proprietary"
+      },
+      {
+        "id": "prov_synth_low_salience_baseline",
+        "source_type": "synthetic",
+        "applied_to_segments": [
+          "disengaged_majority",
+          "casually_attentive"
+        ],
+        "license_class": "permissive"
+      }
+    ]
+  }
+}

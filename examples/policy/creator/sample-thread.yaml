@@ -1,0 +1,129 @@
+persona: creator
+title: "Thread critiquing a popular note-taking app's recent enshittification turn"
+summary: >
+  Independent creator (productivity niche, ~85k followers) drafts a five-post
+  thread arguing a well-known note-taking app has degraded its export and
+  sync UX after a pricing reshuffle. The thread names the product category,
+  not living individuals, and frames the critique as a pattern across the
+  category. Goal: surface backlash vectors before posting.
+seed_text: |
+  Post 1/5: I've used <Category-X> note apps daily for six years. The last
+  two releases of <App-A> quietly broke local export and pushed sync behind
+  a higher tier. This is the playbook.
+
+  Post 2/5: The pattern is consistent. Free features become "premium",
+  premium features become "team", and the migration path off the platform
+  gets quietly worse with each release.
+
+  Post 3/5: Receipts. Export to plain markdown used to be one click; it now
+  requires a workspace owner role and silently drops attachments.
+
+  Post 4/5: This is not a one-app problem. <Category-X> is consolidating and
+  the discipline of treating users as owners of their notes is eroding.
+
+  Post 5/5: If you're shopping, my checklist: local-first storage, plain
+  text export without account, no telemetry by default. Tools that meet
+  this bar in replies.
+stress_question: "Where will this thread misfire and cause backlash?"
+clauses:
+  - clause_id: c1
+    text: "Claim that local export was silently degraded in the last two releases."
+    affects: [follower_cohort, critic, peer_creator]
+  - clause_id: c2
+    text: "Implied recommendation to migrate off the platform."
+    affects: [follower_cohort, algorithmic_cohort, platform]
+stakeholders:
+  - segment_id: s_fans
+    name: "Loyal follower cohort (productivity nerds)"
+    type: follower_cohort
+    interests: ["honest tool reviews", "workflow tips", "local-first software"]
+    incentives: ["validation of their own migration", "save time"]
+    constraints: ["limited bandwidth for tool churn"]
+    likely_support_reasons: ["they have felt the same friction"]
+    likely_opposition_reasons: ["they already paid for higher tier and feel called out"]
+    information_channels: ["thread replies", "newsletter", "youtube comments"]
+    influence_level: 4
+    vulnerability_level: 2
+    compliance_propensity: 4
+    trust_level: 5
+    mobilization_capacity: 4
+    what_changes_their_mind:
+      - "a side-by-side video showing export still working as before"
+      - "official changelog reversing the export change"
+  - segment_id: s_lurkers
+    name: "Silent lurker cohort"
+    type: lurker_cohort
+    interests: ["watching debates without engaging"]
+    incentives: ["staying informed"]
+    constraints: ["low signaling appetite"]
+    likely_support_reasons: ["mild agreement, no public stance"]
+    likely_opposition_reasons: ["fatigue with tool drama"]
+    information_channels: ["timeline scroll"]
+    influence_level: 2
+    vulnerability_level: 1
+    compliance_propensity: 3
+    trust_level: 3
+    mobilization_capacity: 1
+    what_changes_their_mind:
+      - "thread escalates beyond their threshold and they mute"
+  - segment_id: s_hostile
+    name: "Hostile drive-by accounts"
+    type: hostile_drive_by
+    interests: ["dunk opportunities", "ratio attempts"]
+    incentives: ["clout from a viral takedown"]
+    constraints: ["no prior relationship, low context"]
+    likely_support_reasons: ["if the takedown lands they may amplify"]
+    likely_opposition_reasons: ["any opening for bad-faith reframing"]
+    information_channels: ["quote-retweets", "screenshot dunk threads"]
+    influence_level: 3
+    vulnerability_level: 1
+    compliance_propensity: 1
+    trust_level: 1
+    mobilization_capacity: 4
+    what_changes_their_mind:
+      - "creator preempts the obvious bad-faith reframings in post 1"
+  - segment_id: s_algo
+    name: "Algorithmic recommender inflow"
+    type: algorithmic_cohort
+    interests: ["engagement-shaped content"]
+    incentives: ["high reply velocity, controversy signal"]
+    constraints: ["no memory of creator's prior context"]
+    likely_support_reasons: ["controversy triggers wider distribution"]
+    likely_opposition_reasons: ["distribution surfaces hostile audiences too"]
+    information_channels: ["For You feed"]
+    influence_level: 5
+    vulnerability_level: 2
+    compliance_propensity: 2
+    trust_level: 2
+    mobilization_capacity: 5
+    what_changes_their_mind:
+      - "thread underperforms early and falls out of the recommender"
+  - segment_id: s_peer
+    name: "Peer creators in productivity niche"
+    type: peer_creator
+    interests: ["category health", "audience overlap"]
+    incentives: ["being seen as principled"]
+    constraints: ["existing relationships with the app vendor"]
+    likely_support_reasons: ["shared frustration"]
+    likely_opposition_reasons: ["sponsorship deals with vendor"]
+    information_channels: ["DMs", "podcasts", "quote threads"]
+    influence_level: 4
+    vulnerability_level: 3
+    compliance_propensity: 3
+    trust_level: 4
+    mobilization_capacity: 3
+    what_changes_their_mind:
+      - "vendor reaches out privately with a roadmap commitment they can verify"
+assumptions:
+  - "Creator's account is in good standing with the platform"
+  - "Export behaviour described is reproducible in current public release"
+  - "Vendor has not pre-announced a reversal"
+success_criteria:
+  - "Thread reaches >50k impressions without a mass-report event"
+  - "Reply sentiment skews >60% constructive after 24h"
+  - "No factual correction required in a follow-up post"
+failure_modes_to_watch:
+  - "Post 3 receipts get screenshotted out of context and dunked on"
+  - "Vendor PR responds aggressively and shifts narrative to creator's tone"
+  - "Hostile drive-by cohort frames creator as anti-business"
+  - "Algorithmic boost overshoots and surfaces thread to incompatible audiences"

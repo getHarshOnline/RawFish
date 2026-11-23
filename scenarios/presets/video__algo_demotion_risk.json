@@ -1,0 +1,182 @@
+{
+  "preset_id": "video/algo_demotion_risk",
+  "description": "Low attention_budget audience with second-screen watch dominant and bimodal controversy stance. Tests the algorithmic demotion failure mode where polarised engagement plus shallow watch-time trips recommender suppression.",
+  "persona": "video",
+  "scope": "platform_distribution",
+  "region": "global",
+  "expected_risk_tags": [
+    "H-ALGO-DEMOTION",
+    "H-BACKLASH"
+  ],
+  "preset_overrides": {
+    "scenario": {
+      "topic": "Mid-tier video release on a controversy-adjacent topic",
+      "drift_horizon_rounds": 6,
+      "run": {
+        "ensemble_n": 5,
+        "tier": "sanity"
+      },
+      "domain_context": {
+        "platform_signals": {
+          "second_screen_share": 0.62,
+          "avg_view_duration_pct": 0.28,
+          "ctr_baseline": 0.038
+        }
+      },
+      "assumptions": [
+        "Recommender retains short-horizon engagement weighting throughout the horizon.",
+        "Audience composition is stable across the 6-round horizon.",
+        "No platform-level policy change targeting controversy-adjacent content during the horizon."
+      ],
+      "success_criteria": [
+        "Recommender impression delta stays >= 0.7x the baseline.",
+        "Average view duration delta >= -0.05 from baseline.",
+        "Neither polarised cohort exceeds mobilization_capacity ceiling for engagement bombing."
+      ],
+      "failure_modes_to_watch": [
+        "Algorithmic demotion triggered by bimodal engagement signature (likes + dislikes both spike).",
+        "Deep watchers' positive signal gets drowned by low-attention noise.",
+        "Backlash escalates into off-platform coverage and recommender adapts further."
+      ],
+      "audience_segments": [
+        {
+          "id": "low_attention_pro",
+          "label": "Low-attention pro-controversy",
+          "type": "recommender_inflow",
+          "weight": 0.45,
+          "trust_level": 3,
+          "influence_level": 2,
+          "vulnerability_level": 3,
+          "compliance_propensity": 2,
+          "mobilization_capacity": 3,
+          "traits": {
+            "attention_budget": 0.22,
+            "ocean": {
+              "openness": 0.62,
+              "conscientiousness": 0.45,
+              "extraversion": 0.5,
+              "agreeableness": 0.35,
+              "neuroticism": 0.55
+            }
+          },
+          "priors": [
+            {
+              "dimension": "controversy_stance",
+              "support": "beta",
+              "params": {
+                "alpha": 7,
+                "beta": 3
+              },
+              "stance": "support",
+              "weight": 1.0,
+              "provenance_id": "prov_socialblade_controversy_stance"
+            }
+          ]
+        },
+        {
+          "id": "low_attention_anti",
+          "label": "Low-attention anti-controversy",
+          "type": "recommender_inflow",
+          "weight": 0.45,
+          "trust_level": 3,
+          "influence_level": 2,
+          "vulnerability_level": 3,
+          "compliance_propensity": 2,
+          "mobilization_capacity": 3,
+          "traits": {
+            "attention_budget": 0.2,
+            "ocean": {
+              "openness": 0.38,
+              "conscientiousness": 0.55,
+              "extraversion": 0.5,
+              "agreeableness": 0.4,
+              "neuroticism": 0.55
+            }
+          },
+          "priors": [
+            {
+              "dimension": "controversy_stance",
+              "support": "beta",
+              "params": {
+                "alpha": 3,
+                "beta": 7
+              },
+              "stance": "oppose",
+              "weight": 1.0,
+              "provenance_id": "prov_socialblade_controversy_stance"
+            }
+          ]
+        },
+        {
+          "id": "deep_watchers",
+          "label": "Deep watchers",
+          "type": "subscriber_cohort",
+          "weight": 0.1,
+          "trust_level": 4,
+          "influence_level": 3,
+          "vulnerability_level": 2,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 2,
+          "traits": {
+            "attention_budget": 0.78
+          }
+        }
+      ],
+      "trust_baseline": 0.55,
+      "drift_sensitivity_preset": "volatile"
+    },
+    "provenance": [
+      {
+        "id": "prov_socialblade_controversy_stance",
+        "source_type": "platform_data",
+        "source_url": "https://socialblade.com/youtube/category/news-politics",
+        "applied_to_segments": [
+          "low_attention_pro",
+          "low_attention_anti"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Social Blade News & Politics category engagement deciles (accessed 2026-04-01)."
+      },
+      {
+        "id": "prov_user_upload_recommender_telemetry",
+        "source_type": "user_upload",
+        "applied_to_segments": [
+          "low_attention_pro",
+          "low_attention_anti",
+          "deep_watchers"
+        ],
+        "license_class": "proprietary"
+      },
+      {
+        "id": "prov_pew_2024_short_form_video",
+        "source_type": "survey",
+        "source_url": "https://www.pewresearch.org/internet/2024/short-form-video/",
+        "applied_to_segments": [
+          "low_attention_pro",
+          "low_attention_anti"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Pew Research Center, 2024 Short-Form Video Survey."
+      },
+      {
+        "id": "prov_synth_deep_watcher_baseline",
+        "source_type": "synthetic",
+        "applied_to_segments": [
+          "deep_watchers"
+        ],
+        "license_class": "permissive"
+      },
+      {
+        "id": "prov_regulations_gov_recommender_transparency",
+        "source_type": "regulatory_filing",
+        "source_url": "https://www.regulations.gov/document/example-recommender-transparency",
+        "applied_to_segments": [
+          "low_attention_pro",
+          "low_attention_anti",
+          "deep_watchers"
+        ],
+        "license_class": "public_domain"
+      }
+    ]
+  }
+}

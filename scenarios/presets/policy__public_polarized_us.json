@@ -1,0 +1,182 @@
+{
+  "preset_id": "policy/public_polarized_us",
+  "description": "US polarized public policy scenario; partisan_lean bimodal at -0.7 and +0.7. Trips H-BACKLASH, H-MOBILIZATION, H-COALITION-FRAGMENT.",
+  "persona": "policy",
+  "scope": "public_policy",
+  "region": "US",
+  "expected_risk_tags": [
+    "H-BACKLASH",
+    "H-MOBILIZATION",
+    "H-COALITION-FRAGMENT"
+  ],
+  "preset_overrides": {
+    "scenario": {
+      "topic": "Federal-level public policy rollout on a partisan-coded issue",
+      "drift_horizon_rounds": 12,
+      "run": {
+        "ensemble_n": 5,
+        "tier": "sanity"
+      },
+      "domain_context": {
+        "policy_state": {
+          "partisanship_baseline": 0.72,
+          "press_coverage_intensity": "high",
+          "expected_coalition_count": 2
+        }
+      },
+      "assumptions": [
+        "Both partisan coalitions remain mobilizable across the horizon.",
+        "No bipartisan compromise event during the horizon.",
+        "Independents are persuadable but lower mobilization capacity than either partisan wing."
+      ],
+      "success_criteria": [
+        "Independents do not collapse fully into either partisan coalition.",
+        "Mobilization capacity ratio between partisan wings stays within 0.7-1.3 (no runaway coalition).",
+        "Coalition fragmentation appears in at least one wing's response surface."
+      ],
+      "failure_modes_to_watch": [
+        "Backlash overrides expected policy support trajectory.",
+        "Independents stampede toward one partisan wing late in the horizon.",
+        "Coalition fragmentation goes undetected because the model averages over both wings."
+      ],
+      "audience_segments": [
+        {
+          "id": "left_partisans",
+          "label": "Left partisans",
+          "type": "political_actor",
+          "weight": 0.4,
+          "trust_level": 4,
+          "influence_level": 4,
+          "vulnerability_level": 2,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 5,
+          "traits": {
+            "partisan_lean": -0.7,
+            "ocean": {
+              "openness": 0.65,
+              "conscientiousness": 0.5,
+              "extraversion": 0.55,
+              "agreeableness": 0.55,
+              "neuroticism": 0.5
+            }
+          },
+          "priors": [
+            {
+              "dimension": "policy_support",
+              "support": "beta",
+              "params": {
+                "alpha": 8,
+                "beta": 2
+              },
+              "stance": "support",
+              "weight": 1.0,
+              "provenance_id": "prov_anes_2024_partisan_left"
+            }
+          ]
+        },
+        {
+          "id": "right_partisans",
+          "label": "Right partisans",
+          "type": "political_actor",
+          "weight": 0.4,
+          "trust_level": 4,
+          "influence_level": 4,
+          "vulnerability_level": 2,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 5,
+          "traits": {
+            "partisan_lean": 0.7,
+            "ocean": {
+              "openness": 0.45,
+              "conscientiousness": 0.68,
+              "extraversion": 0.5,
+              "agreeableness": 0.5,
+              "neuroticism": 0.5
+            }
+          },
+          "priors": [
+            {
+              "dimension": "policy_support",
+              "support": "beta",
+              "params": {
+                "alpha": 2,
+                "beta": 8
+              },
+              "stance": "oppose",
+              "weight": 1.0,
+              "provenance_id": "prov_anes_2024_partisan_right"
+            }
+          ]
+        },
+        {
+          "id": "independents",
+          "label": "Independents / persuadables",
+          "type": "citizen_segment",
+          "weight": 0.2,
+          "trust_level": 3,
+          "influence_level": 2,
+          "vulnerability_level": 3,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 2,
+          "traits": {
+            "partisan_lean": 0.0
+          }
+        }
+      ],
+      "trust_baseline": 0.45,
+      "drift_sensitivity_preset": "volatile"
+    },
+    "provenance": [
+      {
+        "id": "prov_anes_2024_partisan_left",
+        "source_type": "survey",
+        "source_url": "https://electionstudies.org/data-center/2024-time-series-study/",
+        "applied_to_segments": [
+          "left_partisans"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "American National Election Studies, 2024 Time Series Study (partisan cross-tab)."
+      },
+      {
+        "id": "prov_anes_2024_partisan_right",
+        "source_type": "survey",
+        "source_url": "https://electionstudies.org/data-center/2024-time-series-study/",
+        "applied_to_segments": [
+          "right_partisans"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "American National Election Studies, 2024 Time Series Study (partisan cross-tab)."
+      },
+      {
+        "id": "prov_pew_2024_independents",
+        "source_type": "survey",
+        "source_url": "https://www.pewresearch.org/politics/2024/independents/",
+        "applied_to_segments": [
+          "independents"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Pew Research Center, 2024 Independents profile."
+      },
+      {
+        "id": "prov_regulations_gov_federal_rule",
+        "source_type": "regulatory_filing",
+        "source_url": "https://www.regulations.gov/document/example-federal-partisan-rule",
+        "applied_to_segments": [
+          "left_partisans",
+          "right_partisans",
+          "independents"
+        ],
+        "license_class": "public_domain"
+      },
+      {
+        "id": "prov_synth_polarization_baseline",
+        "source_type": "synthetic",
+        "applied_to_segments": [
+          "left_partisans",
+          "right_partisans"
+        ],
+        "license_class": "permissive"
+      }
+    ]
+  }
+}

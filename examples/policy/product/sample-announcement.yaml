@@ -1,0 +1,128 @@
+persona: product
+title: "Pricing reshuffle: deprecating the Solo tier and folding it into a usage-metered Starter plan"
+summary: >
+  Mid-stage SaaS (collaborative document tool, ~14k paying accounts) plans to
+  deprecate the flat $9/month Solo tier and replace it with a usage-metered
+  Starter plan ($0 base + per-doc-month overage). Existing Solo customers
+  grandfather for 12 months. Goal: stress-test churn vectors and press
+  narrative before the announcement post is published.
+seed_text: |
+  Headline: "Introducing Starter: pay for what you use, keep what you have."
+
+  Body (3 paragraphs):
+  1. We are deprecating the Solo tier on 2026-09-30. New signups will go to
+     Starter, which has a $0 base and meters per active document per month.
+  2. Existing Solo customers are grandfathered through 2027-09-30 at current
+     pricing. After that, accounts move to Starter at the prevailing rate.
+  3. The Pro tier is unchanged. The Team tier gains two seats in the base.
+
+  FAQ (6 entries) covering grandfathering, export, refunds, the metering
+  definition of "active document", how to estimate Starter cost from
+  current usage, and the rollback policy if Starter underperforms.
+stress_question: "Which customer segments churn first, and how does the press frame this?"
+clauses:
+  - clause_id: c1
+    text: "Solo tier is deprecated; existing Solo customers grandfather for 12 months."
+    affects: [existing_user, churned_user, press_outlet]
+  - clause_id: c2
+    text: "Starter is $0 base + per-active-doc-month overage."
+    affects: [prospect, existing_user, competitor]
+  - clause_id: c3
+    text: "Definition of 'active document' is any doc with >=1 edit in the calendar month."
+    affects: [existing_user, support_channel, developer_relations]
+stakeholders:
+  - segment_id: s_power
+    name: "Existing power users on Solo (high doc count)"
+    type: existing_user
+    interests: ["predictable bill", "no feature regression"]
+    incentives: ["grandfather window protects them short term"]
+    constraints: ["large doc graveyards will inflate Starter cost"]
+    likely_support_reasons: ["transparent metering definition"]
+    likely_opposition_reasons: ["post-grandfather bill 3-8x current"]
+    information_channels: ["in-app banner", "billing email", "support tickets"]
+    influence_level: 4
+    vulnerability_level: 4
+    compliance_propensity: 2
+    trust_level: 3
+    mobilization_capacity: 3
+    what_changes_their_mind:
+      - "an archive tier at $3/mo for read-only docs"
+      - "a usage estimator surfaced in-app before the change lands"
+  - segment_id: s_pricesens
+    name: "Price-sensitive Solo customers (low doc count)"
+    type: existing_user
+    interests: ["lowest possible bill"]
+    incentives: ["Starter likely cheaper than current $9 flat"]
+    constraints: ["fear of metered billing surprise"]
+    likely_support_reasons: ["realised they will pay less"]
+    likely_opposition_reasons: ["metering anxiety"]
+    information_channels: ["billing email", "twitter"]
+    influence_level: 2
+    vulnerability_level: 3
+    compliance_propensity: 4
+    trust_level: 3
+    mobilization_capacity: 2
+    what_changes_their_mind:
+      - "post-launch dashboards show their actual monthly cost is <$9"
+  - segment_id: s_prospect
+    name: "Prospective customers shopping the category"
+    type: prospect
+    interests: ["fair pricing", "predictable scale"]
+    incentives: ["$0 entry removes friction"]
+    constraints: ["metered billing is a known objection in their procurement"]
+    likely_support_reasons: ["zero base lowers signup friction"]
+    likely_opposition_reasons: ["finance teams flag metered as unbudgeted risk"]
+    information_channels: ["pricing page", "competitor comparison content"]
+    influence_level: 3
+    vulnerability_level: 2
+    compliance_propensity: 3
+    trust_level: 3
+    mobilization_capacity: 2
+    what_changes_their_mind:
+      - "a published 'cost cap' commitment for the first 12 months"
+  - segment_id: s_competitor
+    name: "Direct competitors watching the announcement"
+    type: competitor
+    interests: ["positioning material", "switching campaigns"]
+    incentives: ["pick up disgruntled Solo customers"]
+    constraints: ["their own pricing is also under review"]
+    likely_support_reasons: ["validates a category-wide pricing reset"]
+    likely_opposition_reasons: ["nothing; they will spin either way"]
+    information_channels: ["paid search on brand terms", "comparison blog posts"]
+    influence_level: 3
+    vulnerability_level: 1
+    compliance_propensity: 1
+    trust_level: 1
+    mobilization_capacity: 4
+    what_changes_their_mind:
+      - "irrelevant; they are not the audience"
+  - segment_id: s_press
+    name: "Trade press covering the SaaS pricing beat"
+    type: press_outlet
+    interests: ["a clean narrative arc", "named-customer reactions"]
+    incentives: ["story that gets reshared"]
+    constraints: ["limited time for nuance"]
+    likely_support_reasons: ["transparent grandfather window reads as customer-friendly"]
+    likely_opposition_reasons: ["metering reads as a sneaky price hike"]
+    information_channels: ["embargoed briefing", "twitter quotes from customers"]
+    influence_level: 4
+    vulnerability_level: 1
+    compliance_propensity: 2
+    trust_level: 3
+    mobilization_capacity: 5
+    what_changes_their_mind:
+      - "a pre-briefing with a worked example showing Starter is cheaper for the median Solo customer"
+assumptions:
+  - "Median Solo customer has fewer than 8 active docs/month and will pay less on Starter"
+  - "Grandfather window length (12 months) is final and not negotiable internally"
+  - "No simultaneous announcement from a major competitor that would distract"
+success_criteria:
+  - "Solo->Starter migration rate >70% by month 6 post-launch"
+  - "Churn rate among Solo customers <8% in the 90 days after announcement"
+  - "Press coverage sentiment >50% neutral-or-positive in tracked outlets"
+failure_modes_to_watch:
+  - "Power users with large doc graveyards publish bill-shock screenshots"
+  - "Press headline anchors on 'price hike' and ignores the grandfather window"
+  - "Competitor switching campaigns reach high-doc-count Solo customers within 72h"
+  - "Support volume spikes beyond capacity and grandfather edge cases get mishandled"
+  - "Definition of 'active document' is litigated in public and forced to change mid-flight"

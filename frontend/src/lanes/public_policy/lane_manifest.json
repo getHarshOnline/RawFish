@@ -1,0 +1,54 @@
+{
+  "lane_id": "public_policy",
+  "label": "Public Policy",
+  "summary": "Stress-test civic reactions, public comments, media salience, and regulatory risk.",
+  "accent": "#1D4ED8",
+  "default_provider": {
+    "mode": "local_ollama",
+    "model": "qwen3-coder:30b"
+  },
+  "cockpit_slots": [
+    "statistical_workbench_inline_editor",
+    "statistical_workbench_override_badge",
+    "statistical_workbench_provenance_chip",
+    "statistical_workbench_validity_strip",
+    "statistical_workbench_variant_strip",
+    "statistical_workbench_impact_tooltip",
+    "statistical_workbench_preflight_meter",
+    "statistical_workbench_drift_subpanel",
+    "statistical_workbench_salt_seed_panel",
+    "statistical_workbench_priors_attach_panel",
+    "statistical_workbench_active_hours_grid",
+    "statistical_workbench_manifest_chip"
+  ],
+  "cohorts": [
+    { "id": "constituents", "label": "Constituents", "short_label": "CON", "color": "#1D4ED8" },
+    { "id": "advocacy", "label": "Advocacy groups", "short_label": "ADV", "color": "#059669" },
+    { "id": "media", "label": "Media", "short_label": "MED", "color": "#B45309" },
+    { "id": "regulators", "label": "Regulators", "short_label": "REG", "color": "#7B2D8E" }
+  ],
+  "run_timeline_platforms": [
+    { "id": "public_comment", "label": "PUBLIC COMMENT", "accent": "#1D4ED8" },
+    { "id": "media_cycle", "label": "MEDIA CYCLE", "accent": "#B45309" }
+  ],
+  "report_sections": [
+    { "id": "reaction_map", "label": "Reaction map" },
+    { "id": "jurisdiction_caveats", "label": "Jurisdiction caveats" },
+    { "id": "validation_needs", "label": "Validation needs" }
+  ],
+  "analysis_panels": {
+    "compare": { "enabled": true },
+    "counterfactual": { "enabled": false },
+    "sensitivity": { "enabled": false }
+  },
+  "eval_instruments": {
+    "cost_preflight": {
+      "default_ensemble_n": 5,
+      "default_rounds": 16,
+      "budget_cap": 500,
+      "provider_modes": ["local_ollama", "local_openai_compatible", "external"],
+      "provider_selection_scope": "per_run",
+      "external_budget": { "currency": "USD", "warn_at": 1.0 }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "rawfish",
+  "version": "0.1.0",
+  "description": "RawFish - audience-reaction simulator for pre-mortem analysis of content, product, and policy decisions",
+  "scripts": {
+    "setup": "npm ci && cd frontend && npm ci",
+    "setup:backend": "cd backend && uv sync --frozen",
+    "setup:all": "npm run setup && npm run setup:backend",
+    "dev": "concurrently --kill-others -n \"backend,frontend\" -c \"green,cyan\" \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && uv run python run.py",
+    "frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "concurrently --kill-others -n \"backend,frontend\" -c \"green,cyan\" \"npm run backend:prod\" \"npm run frontend:preview\"",
+    "backend:prod": "cd backend && uv run gunicorn -w 1 --threads 8 --timeout 120 -b ${RAWFISH_BACKEND_BIND:-127.0.0.1:5001} 'app:create_app()'",
+    "frontend:preview": "cd frontend && npm run preview"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20.19.0 || >=22.12.0"
+  },
+  "license": "AGPL-3.0-only"
+}

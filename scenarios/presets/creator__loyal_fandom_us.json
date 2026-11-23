@@ -1,0 +1,176 @@
+{
+  "preset_id": "creator/loyal_fandom_us",
+  "description": "Baseline US creator scenario: 80% combined regular+superfan audience with high baseline trust (0.75). Establishes the 'friendly room' control case against which churn / backlash presets are contrasted.",
+  "persona": "creator",
+  "scope": "social_media",
+  "region": "US",
+  "expected_risk_tags": [
+    "H-RETENTION",
+    "H-PARASOCIAL"
+  ],
+  "preset_overrides": {
+    "scenario": {
+      "topic": "Routine upload cadence to a loyal audience",
+      "drift_horizon_rounds": 8,
+      "run": {
+        "ensemble_n": 5,
+        "tier": "sanity"
+      },
+      "domain_context": {
+        "creator_state": {
+          "fatigue_prior": 0.2,
+          "tenure_months": 30,
+          "upload_consistency": 0.92
+        }
+      },
+      "assumptions": [
+        "Audience composition reflects an established US-centric channel with positive trust trajectory.",
+        "No external scandal or platform-level demonetisation event during the horizon."
+      ],
+      "success_criteria": [
+        "Superfan trust priors remain in the strong-positive band across all rounds.",
+        "Regular-viewer sentiment does not invert.",
+        "Drive-by viewer drift stays within the conservative band."
+      ],
+      "failure_modes_to_watch": [
+        "Latent dissatisfaction in regulars masked by the loud superfan signal.",
+        "Drive-by viewers fail to convert into regulars, signalling top-of-funnel decay."
+      ],
+      "audience_segments": [
+        {
+          "id": "superfan_us",
+          "label": "US superfans",
+          "type": "follower_cohort",
+          "weight": 0.35,
+          "trust_level": 5,
+          "influence_level": 4,
+          "vulnerability_level": 2,
+          "compliance_propensity": 4,
+          "mobilization_capacity": 4,
+          "traits": {
+            "parasocial_intensity": 0.82,
+            "ocean": {
+              "openness": 0.5,
+              "conscientiousness": 0.55,
+              "extraversion": 0.55,
+              "agreeableness": 0.72,
+              "neuroticism": 0.38
+            }
+          },
+          "priors": [
+            {
+              "dimension": "trust",
+              "support": "beta",
+              "params": {
+                "alpha": 8,
+                "beta": 2
+              },
+              "stance": "support",
+              "weight": 1.0,
+              "provenance_id": "prov_pew_creator_economy_2024"
+            },
+            {
+              "dimension": "sentiment",
+              "support": "beta",
+              "params": {
+                "alpha": 7,
+                "beta": 3
+              },
+              "stance": "support",
+              "weight": 1.0,
+              "provenance_id": "prov_socialblade_us_creator_sentiment"
+            }
+          ]
+        },
+        {
+          "id": "regular_us",
+          "label": "US regular viewers",
+          "type": "follower_cohort",
+          "weight": 0.45,
+          "trust_level": 4,
+          "influence_level": 2,
+          "vulnerability_level": 2,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 2,
+          "traits": {
+            "parasocial_intensity": 0.55,
+            "ocean": {
+              "openness": 0.5,
+              "conscientiousness": 0.55,
+              "extraversion": 0.5,
+              "agreeableness": 0.62,
+              "neuroticism": 0.42
+            }
+          }
+        },
+        {
+          "id": "drifters_us",
+          "label": "US drive-by viewers",
+          "type": "hostile_drive_by",
+          "weight": 0.2,
+          "trust_level": 2,
+          "influence_level": 1,
+          "vulnerability_level": 3,
+          "compliance_propensity": 2,
+          "mobilization_capacity": 1,
+          "traits": {
+            "parasocial_intensity": 0.18
+          }
+        }
+      ],
+      "trust_baseline": 0.75,
+      "drift_sensitivity_preset": "conservative"
+    },
+    "provenance": [
+      {
+        "id": "prov_pew_creator_economy_2024",
+        "source_type": "survey",
+        "source_url": "https://www.pewresearch.org/internet/2024/creator-economy/",
+        "applied_to_segments": [
+          "superfan_us",
+          "regular_us"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Pew Research Creator Economy Survey 2024."
+      },
+      {
+        "id": "prov_socialblade_us_creator_sentiment",
+        "source_type": "platform_data",
+        "source_url": "https://socialblade.com/youtube/top/country/us",
+        "applied_to_segments": [
+          "superfan_us"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Social Blade US channel sentiment deciles (accessed 2026-04-01)."
+      },
+      {
+        "id": "prov_synth_parasocial_baseline",
+        "source_type": "synthetic",
+        "applied_to_segments": [
+          "superfan_us",
+          "regular_us",
+          "drifters_us"
+        ],
+        "license_class": "permissive"
+      },
+      {
+        "id": "prov_user_upload_baseline_channel_notes",
+        "source_type": "user_upload",
+        "applied_to_segments": [
+          "regular_us"
+        ],
+        "license_class": "proprietary"
+      },
+      {
+        "id": "prov_anes_2024_attention",
+        "source_type": "survey",
+        "source_url": "https://electionstudies.org/data-center/2024-time-series-study/",
+        "applied_to_segments": [
+          "drifters_us"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "American National Election Studies, 2024 Time Series Study."
+      }
+    ]
+  }
+}

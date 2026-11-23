@@ -1,0 +1,30 @@
+services:
+  rawfish:
+    image: rawfish:local
+    # Build locally to bake the frontend API key into the bundled artifact. `docker compose up --build` uses
+    # VITE_API_KEY from the root .env as a build-arg.
+    build:
+      context: .
+      args:
+        VITE_API_KEY: ${VITE_API_KEY:-}
+    container_name: rawfish
+    env_file:
+      - .env
+    environment:
+      # Internal container bind; host exposure remains restricted by the
+      # loopback-only ports below.
+      RAWFISH_BACKEND_BIND: "0.0.0.0:5001"
+    ports:
+      # Loopback-bound publishes. The RawFish app is designed for
+      # single-machine / intranet operator use; binding to 0.0.0.0
+      # would publish the frontend + backend on every host interface,
+      # which the hygiene gate ``check_docker_compose_loopback.sh``
+      # forbids alongside the matching loopback pin on the Neo4j
+      # ports in ``backend/docker-compose.yml``. To expose the app to
+      # another host, front it with a reverse proxy / VPN rather than
+      # widening this binding.
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:5001:5001"
+    restart: unless-stopped
+    volumes:
+      - ./backend/uploads:/app/backend/uploads

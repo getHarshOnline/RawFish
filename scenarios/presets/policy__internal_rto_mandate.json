@@ -1,0 +1,180 @@
+{
+  "preset_id": "policy/internal_rto_mandate",
+  "description": "Internal return-to-office mandate with dissent tiered by seniority and tenure. Trips H-RETENTION, H-DISSENT, H-COMPLIANCE.",
+  "persona": "policy",
+  "scope": "internal_org",
+  "region": "US",
+  "expected_risk_tags": [
+    "H-RETENTION",
+    "H-DISSENT",
+    "H-COMPLIANCE"
+  ],
+  "preset_overrides": {
+    "scenario": {
+      "topic": "Mandatory 4-day-per-week return to office, effective in 90 days",
+      "drift_horizon_rounds": 10,
+      "run": {
+        "ensemble_n": 5,
+        "tier": "sanity"
+      },
+      "domain_context": {
+        "policy_state": {
+          "enforcement_mechanism": "badge_swipe_audit",
+          "grace_period_days": 90,
+          "exception_path": "manager_discretion"
+        },
+        "org_state": {
+          "headcount_band": "5000-10000",
+          "remote_share_pre_mandate": 0.55
+        }
+      },
+      "assumptions": [
+        "Mandate is communicated company-wide on day 0 with no phased rollout.",
+        "Exception requests route through line managers with no central tracking.",
+        "External job market remains absorbent for senior ICs over the horizon."
+      ],
+      "success_criteria": [
+        "Senior IC voluntary attrition delta <= 0.05 over the horizon.",
+        "Compliance rate >= 0.80 by day 90 across all cohorts.",
+        "No Glassdoor rating drop greater than 0.5 stars."
+      ],
+      "failure_modes_to_watch": [
+        "Senior ICs depart silently before the badge-swipe enforcement begins.",
+        "Manager-discretion exception path becomes the de-facto policy, undermining the mandate.",
+        "Junior cohort compliance masks a hidden engagement collapse."
+      ],
+      "audience_segments": [
+        {
+          "id": "senior_long_tenure",
+          "label": "Senior, long-tenure ICs and managers",
+          "type": "employee_cohort",
+          "weight": 0.2,
+          "trust_level": 3,
+          "influence_level": 5,
+          "vulnerability_level": 2,
+          "compliance_propensity": 2,
+          "mobilization_capacity": 4,
+          "traits": {
+            "ocean": {
+              "openness": 0.55,
+              "conscientiousness": 0.72,
+              "extraversion": 0.5,
+              "agreeableness": 0.5,
+              "neuroticism": 0.45
+            },
+            "freeform": {
+              "tenure_band": "6+ years"
+            }
+          },
+          "priors": [
+            {
+              "dimension": "dissent",
+              "support": "beta",
+              "params": {
+                "alpha": 7,
+                "beta": 3
+              },
+              "stance": "oppose",
+              "weight": 1.0,
+              "provenance_id": "prov_glassdoor_rto_dissent"
+            }
+          ]
+        },
+        {
+          "id": "mid_tenure_ic",
+          "label": "Mid-tenure ICs",
+          "type": "employee_cohort",
+          "weight": 0.45,
+          "trust_level": 3,
+          "influence_level": 3,
+          "vulnerability_level": 3,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 3,
+          "traits": {
+            "freeform": {
+              "tenure_band": "2-5 years"
+            }
+          }
+        },
+        {
+          "id": "junior_recent_hires",
+          "label": "Junior / recently hired",
+          "type": "employee_cohort",
+          "weight": 0.25,
+          "trust_level": 3,
+          "influence_level": 2,
+          "vulnerability_level": 4,
+          "compliance_propensity": 4,
+          "mobilization_capacity": 2,
+          "traits": {
+            "freeform": {
+              "tenure_band": "0-1 years"
+            }
+          }
+        },
+        {
+          "id": "executives",
+          "label": "Executives / sponsors",
+          "type": "executive_team",
+          "weight": 0.1,
+          "trust_level": 4,
+          "influence_level": 5,
+          "vulnerability_level": 1,
+          "compliance_propensity": 5,
+          "mobilization_capacity": 4
+        }
+      ],
+      "trust_baseline": 0.45,
+      "drift_sensitivity_preset": "volatile"
+    },
+    "provenance": [
+      {
+        "id": "prov_glassdoor_rto_dissent",
+        "source_type": "platform_data",
+        "source_url": "https://www.glassdoor.com/research/return-to-office-2024/",
+        "applied_to_segments": [
+          "senior_long_tenure"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Glassdoor RTO sentiment dataset (2024 review aggregate)."
+      },
+      {
+        "id": "prov_user_upload_hr_dashboard_export",
+        "source_type": "user_upload",
+        "applied_to_segments": [
+          "mid_tenure_ic",
+          "junior_recent_hires"
+        ],
+        "license_class": "proprietary"
+      },
+      {
+        "id": "prov_bls_2024_remote_work_share",
+        "source_type": "regulatory_filing",
+        "source_url": "https://www.bls.gov/cps/cpsaat55.htm",
+        "applied_to_segments": [
+          "senior_long_tenure",
+          "mid_tenure_ic"
+        ],
+        "license_class": "public_domain"
+      },
+      {
+        "id": "prov_pew_2024_workplace_survey",
+        "source_type": "survey",
+        "source_url": "https://www.pewresearch.org/social-trends/2024/workplace/",
+        "applied_to_segments": [
+          "junior_recent_hires"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Pew Research Workplace Trends Survey 2024."
+      },
+      {
+        "id": "prov_synth_executive_alignment_baseline",
+        "source_type": "synthetic",
+        "applied_to_segments": [
+          "executives"
+        ],
+        "license_class": "permissive"
+      }
+    ]
+  }
+}

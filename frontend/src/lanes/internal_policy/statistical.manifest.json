@@ -1,0 +1,893 @@
+{
+  "lane_id": "internal_policy",
+  "version": "0.1",
+  "impact_model": {
+    "source": "runSurrogateExplainer",
+    "fallback": "no impact preview available"
+  },
+  "citation_policy": {
+    "required": true,
+    "table": "internal_policy_statistical_v0"
+  },
+  "provenance_policy": {
+    "allowed": [
+      "user-set",
+      "manifest-default",
+      "inferred-from-prior",
+      "sampled",
+      "inferred-from-parseScenario"
+    ]
+  },
+  "fields": [
+    {
+      "id": "run.run_seed",
+      "label": "Run seed",
+      "kind": "integer",
+      "control": "numeric",
+      "default": 2048,
+      "min": 0,
+      "max": 2147483647,
+      "step": 1,
+      "description": "Master seed for deterministic internal-policy sampling.",
+      "why_it_matters": "Controls deterministic replay and persona sampling without changing the scenario.",
+      "citation_key": "run_controls.run_seed",
+      "modalities": [
+        "numeric"
+      ],
+      "validation": [
+        {
+          "rule_id": "integer_in_range",
+          "args": {
+            "min": 0
+          }
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "sampling",
+        "comparison"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "run.ensemble_n",
+      "label": "Ensemble size",
+      "kind": "integer",
+      "control": "slider_number",
+      "default": 5,
+      "min": 1,
+      "max": 80,
+      "step": 1,
+      "description": "Number of independent organizational-response passes.",
+      "why_it_matters": "Moves the scale guard, token estimate, and stability of aggregate findings.",
+      "citation_key": "scale_guard.ensemble_n",
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "validation": [
+        {
+          "rule_id": "integer_in_range",
+          "args": {
+            "min": 1,
+            "max": 80
+          }
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "sampling",
+        "run-behavior",
+        "comparison"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "run.drift_horizon_rounds",
+      "label": "Interaction rounds",
+      "kind": "integer",
+      "control": "slider_number",
+      "default": 16,
+      "min": 1,
+      "max": 120,
+      "step": 1,
+      "description": "Maximum simulated interaction rounds per stakeholder cohort.",
+      "why_it_matters": "Longer runs expose slower coordination and compliance risks.",
+      "citation_key": "run_controls.drift_horizon_rounds",
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "validation": [
+        {
+          "rule_id": "integer_in_range",
+          "args": {
+            "min": 1,
+            "max": 120
+          }
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "run-behavior",
+        "comparison"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "cohort.activity_level",
+      "label": "Activity level",
+      "kind": "number",
+      "control": "slider_number",
+      "default": 0.5,
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "units": "%",
+      "description": "Baseline probability that an internal stakeholder cohort is active during a round.",
+      "why_it_matters": "Raises or lowers cohort participation pressure before report claims are generated.",
+      "citation_key": "agent_activity.activity_level",
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "validation": [
+        {
+          "rule_id": "float_in_range",
+          "args": {
+            "min": 0,
+            "max": 1
+          }
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "sampling",
+        "run-behavior"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "cohort.posts_per_hour",
+      "label": "Posts per hour",
+      "kind": "number",
+      "control": "slider_number",
+      "default": 1,
+      "min": 0,
+      "max": 4,
+      "step": 0.1,
+      "units": "/hour",
+      "description": "Approximate outbound posting cadence for a stakeholder cohort.",
+      "why_it_matters": "Changes how much each cohort can inject into the simulated rollout conversation.",
+      "citation_key": "agent_activity.posts_per_hour",
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "validation": [
+        {
+          "rule_id": "float_in_range",
+          "args": {
+            "min": 0,
+            "max": 4
+          }
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "run-behavior"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "cohort.comments_per_hour",
+      "label": "Comments per hour",
+      "kind": "number",
+      "control": "slider_number",
+      "default": 2,
+      "min": 0,
+      "max": 8,
+      "step": 0.1,
+      "units": "/hour",
+      "description": "Approximate reply/comment cadence for a stakeholder cohort.",
+      "why_it_matters": "Changes how strongly a cohort reacts to other cohorts rather than posting alone.",
+      "citation_key": "agent_activity.comments_per_hour",
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "validation": [
+        {
+          "rule_id": "float_in_range",
+          "args": {
+            "min": 0,
+            "max": 8
+          }
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "run-behavior"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "cohort.influence_weight",
+      "label": "Influence weight",
+      "kind": "number",
+      "control": "slider_number",
+      "default": 1,
+      "min": 0,
+      "max": 3,
+      "step": 0.05,
+      "description": "Relative graph and reaction weight for the cohort.",
+      "why_it_matters": "Influence affects which stakeholder reactions dominate aggregate report summaries.",
+      "citation_key": "agent_activity.influence_weight",
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "validation": [
+        {
+          "rule_id": "float_in_range",
+          "args": {
+            "min": 0,
+            "max": 3
+          }
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "run-behavior",
+        "report-weighting"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "cohort.sentiment_bias",
+      "label": "Sentiment bias",
+      "kind": "number",
+      "control": "slider_number",
+      "default": 0,
+      "min": -1,
+      "max": 1,
+      "step": 0.05,
+      "description": "Starting sentiment offset for the cohort.",
+      "why_it_matters": "Makes explicit whether a cohort starts receptive, neutral, or skeptical.",
+      "citation_key": "agent_activity.sentiment_bias",
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "validation": [
+        {
+          "rule_id": "float_in_range",
+          "args": {
+            "min": -1,
+            "max": 1
+          }
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "run-behavior",
+        "report-weighting"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "cohort.active_hours",
+      "label": "Active hours",
+      "kind": "active_hours",
+      "control": "active_hours_grid",
+      "default": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "description": "Local working hours during which internal agents can react.",
+      "why_it_matters": "Constrains organizational timing patterns without fabricating results.",
+      "citation_key": "agent_activity.active_hours",
+      "modalities": [
+        "grid24h",
+        "preset_picker"
+      ],
+      "validation": [
+        {
+          "rule_id": "hours_0_23"
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "run-behavior"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "run.persona_salts",
+      "label": "Stakeholder salts",
+      "kind": "salt_map",
+      "control": "key_value",
+      "default": {
+        "employees": "internal-default",
+        "managers": "internal-default",
+        "hr": "internal-default",
+        "leadership": "internal-default"
+      },
+      "description": "Optional deterministic salts for stakeholder-level variation.",
+      "why_it_matters": "Keeps cohort identity stable when comparing base and reseeded variants.",
+      "citation_key": "run_controls.persona_salts",
+      "modalities": [
+        "chip_select"
+      ],
+      "validation": [
+        {
+          "rule_id": "salt_map"
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "sampling",
+        "comparison"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "sampled",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "cohort.priors.attached_priors_id",
+      "label": "Prior bundle",
+      "kind": "text",
+      "control": "text",
+      "default": "internal_policy_default_priors_v0",
+      "description": "Identifier for the internal-policy prior bundle applied to the run.",
+      "why_it_matters": "Records assumptions used before generated stakeholder reactions are observed.",
+      "citation_key": "priors.bundle_id",
+      "modalities": [
+        "chip_select"
+      ],
+      "validation": [
+        {
+          "rule_id": "text_non_empty"
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "sampling",
+        "report-weighting"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "inferred-from-prior"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    },
+    {
+      "id": "manifest.claim_tag_allowlist",
+      "label": "Claim tag allowlist",
+      "kind": "multi_select",
+      "control": "checkbox_group",
+      "default": [
+        "simulated_observation",
+        "inference",
+        "assumption",
+        "requires_validation"
+      ],
+      "description": "Claim provenance tags the internal-policy report is allowed to emit.",
+      "why_it_matters": "Keeps report language honest about simulated versus assumed claims.",
+      "citation_key": "hypothesis_tags.canonical",
+      "modalities": [
+        "chip_select"
+      ],
+      "validation": [
+        {
+          "rule_id": "enum_subset"
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "report-weighting"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default",
+        "lock_default": true
+      },
+      "options": [
+        {
+          "value": "source_grounded",
+          "label": "Source grounded"
+        },
+        {
+          "value": "simulated_observation",
+          "label": "Simulated observation"
+        },
+        {
+          "value": "inference",
+          "label": "Inference"
+        },
+        {
+          "value": "assumption",
+          "label": "Assumption"
+        },
+        {
+          "value": "requires_validation",
+          "label": "Requires validation"
+        }
+      ],
+      "lock_supported": true
+    },
+    {
+      "id": "manifest.validity_flags_allowlist",
+      "label": "Validity flag allowlist",
+      "kind": "multi_select",
+      "control": "checkbox_group",
+      "default": [
+        "monte_carlo_coverage",
+        "survivorship_or_cohort_gap",
+        "utility_curve"
+      ],
+      "description": "Methodological validity flags allowed in the internal-policy report.",
+      "why_it_matters": "Limits validity annotations to flags the lane can substantiate.",
+      "citation_key": "validity_flags.canonical",
+      "modalities": [
+        "chip_select"
+      ],
+      "validation": [
+        {
+          "rule_id": "enum_subset"
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "report-weighting"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default",
+        "lock_default": true
+      },
+      "options": [
+        {
+          "value": "power_law_tail",
+          "label": "Power-law tail"
+        },
+        {
+          "value": "monte_carlo_coverage",
+          "label": "Monte Carlo coverage"
+        },
+        {
+          "value": "survivorship_or_cohort_gap",
+          "label": "Cohort gap"
+        },
+        {
+          "value": "observer_effect",
+          "label": "Observer effect"
+        },
+        {
+          "value": "simpson_aggregate_disagreement",
+          "label": "Aggregate disagreement"
+        },
+        {
+          "value": "mean_reversion",
+          "label": "Mean reversion"
+        },
+        {
+          "value": "utility_curve",
+          "label": "Utility curve"
+        },
+        {
+          "value": "confirmation_bias",
+          "label": "Confirmation bias"
+        },
+        {
+          "value": "selection_axis",
+          "label": "Selection axis"
+        }
+      ],
+      "lock_supported": true
+    },
+    {
+      "id": "cohort.drift.axis",
+      "label": "Policy drift axis",
+      "kind": "choice",
+      "control": "select",
+      "default": "implementation_burden",
+      "description": "Internal-policy dimension to vary during sensitivity review.",
+      "why_it_matters": "Identifies which implementation assumption a later rerun should perturb.",
+      "citation_key": "policy_drift.axis",
+      "modalities": [
+        "preset_picker"
+      ],
+      "validation": [
+        {
+          "rule_id": "enum"
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "comparison"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "options": [
+        {
+          "value": "implementation_burden",
+          "label": "Implementation burden"
+        },
+        {
+          "value": "manager_discretion",
+          "label": "Manager discretion"
+        },
+        {
+          "value": "employee_privacy",
+          "label": "Employee privacy"
+        },
+        {
+          "value": "exception_handling",
+          "label": "Exception handling"
+        }
+      ],
+      "lock_supported": true
+    },
+    {
+      "id": "variant.counterfactual_axis",
+      "label": "Counterfactual axis",
+      "kind": "choice",
+      "control": "select",
+      "default": "rollout_timing",
+      "description": "Internal-policy counterfactual dimension for variant lineage.",
+      "why_it_matters": "Records the intended counterfactual; it does not execute one by itself.",
+      "citation_key": "counterfactual.axis",
+      "modalities": [
+        "preset_picker"
+      ],
+      "validation": [
+        {
+          "rule_id": "enum"
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "comparison"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "options": [
+        {
+          "value": "rollout_timing",
+          "label": "Rollout timing"
+        },
+        {
+          "value": "training_depth",
+          "label": "Training depth"
+        },
+        {
+          "value": "manager_override",
+          "label": "Manager override"
+        },
+        {
+          "value": "communications_channel",
+          "label": "Communications channel"
+        }
+      ],
+      "lock_supported": true
+    },
+    {
+      "id": "variant.sensitivity_metric",
+      "label": "Sensitivity metric",
+      "kind": "choice",
+      "control": "select",
+      "default": "compliance_load",
+      "description": "Primary metric for internal-policy sensitivity summaries.",
+      "why_it_matters": "Controls labeling and comparison focus for later analysis artifacts.",
+      "citation_key": "sensitivity.metric",
+      "modalities": [
+        "preset_picker"
+      ],
+      "validation": [
+        {
+          "rule_id": "enum"
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "comparison",
+        "report-weighting"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "options": [
+        {
+          "value": "compliance_load",
+          "label": "Compliance load"
+        },
+        {
+          "value": "employee_trust",
+          "label": "Employee trust"
+        },
+        {
+          "value": "managerial_friction",
+          "label": "Managerial friction"
+        },
+        {
+          "value": "equity_gap",
+          "label": "Equity gap"
+        }
+      ],
+      "lock_supported": true
+    },
+    {
+      "id": "manifest.uncertainty_band",
+      "label": "Uncertainty band",
+      "kind": "number",
+      "control": "slider_number",
+      "default": 0.2,
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "description": "Categorical uncertainty tolerance used when bucketing findings.",
+      "why_it_matters": "Higher values widen advisory bands; no calibrated probability is claimed.",
+      "citation_key": "validity_flags.uncertainty_band",
+      "modalities": [
+        "slider",
+        "numeric"
+      ],
+      "validation": [
+        {
+          "rule_id": "float_in_range",
+          "args": {
+            "min": 0,
+            "max": 1
+          }
+        }
+      ],
+      "lane_applicability": [
+        "internal_policy"
+      ],
+      "affects": [
+        "report-weighting"
+      ],
+      "impact_hint": {
+        "source": "runSurrogateExplainer",
+        "swing_magnitude": null,
+        "kernel_disclaimer": "static_kernel_v1; no impact preview available until sensitivity runs.",
+        "cooccurrence_caveat": "co-occurrence, not causal"
+      },
+      "provenance": [
+        "manifest-default",
+        "user-set"
+      ],
+      "provenance_policy": {
+        "initial": "manifest-default"
+      },
+      "lock_supported": true
+    }
+  ]
+}

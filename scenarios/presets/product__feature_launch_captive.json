@@ -1,0 +1,154 @@
+{
+  "preset_id": "product/feature_launch_captive",
+  "description": "B2B captive userbase with switching_cost 0.85. Tests the low-friction launch overconfidence failure mode where high switching cost masks NPS erosion until renewal.",
+  "persona": "product",
+  "scope": "b2b_saas",
+  "region": "global",
+  "expected_risk_tags": [
+    "H-OVERCONFIDENCE",
+    "H-CHURN-LATENT"
+  ],
+  "preset_overrides": {
+    "scenario": {
+      "topic": "Major feature launch for a captive B2B userbase with annual contracts",
+      "drift_horizon_rounds": 8,
+      "run": {
+        "ensemble_n": 5,
+        "tier": "sanity"
+      },
+      "domain_context": {
+        "market_state": {
+          "switching_cost": 0.85,
+          "contract_lock_months_avg": 11,
+          "competitor_parity": 0.55
+        }
+      },
+      "assumptions": [
+        "Contract lock-in suppresses observable churn during the horizon.",
+        "Power admins drive a disproportionate share of in-product feedback.",
+        "Competitor feature parity does not change materially during the horizon."
+      ],
+      "success_criteria": [
+        "Power-admin NPS delta stays >= 0 across the horizon.",
+        "Daily-user friction signal stays below the workflow-friction tolerance band.",
+        "Latent renewal-risk indicator does not cross 0.30."
+      ],
+      "failure_modes_to_watch": [
+        "Power admins endorse publicly but quietly de-recommend at renewal.",
+        "Daily users absorb friction without surfacing complaints (silent NPS erosion).",
+        "Competitor closes parity gap mid-horizon and renewal lift evaporates."
+      ],
+      "audience_segments": [
+        {
+          "id": "power_admins",
+          "label": "Workspace admins / power users",
+          "type": "existing_user",
+          "weight": 0.3,
+          "trust_level": 4,
+          "influence_level": 5,
+          "vulnerability_level": 2,
+          "compliance_propensity": 4,
+          "mobilization_capacity": 4,
+          "traits": {
+            "ocean": {
+              "openness": 0.55,
+              "conscientiousness": 0.78,
+              "extraversion": 0.5,
+              "agreeableness": 0.5,
+              "neuroticism": 0.4
+            }
+          },
+          "priors": [
+            {
+              "dimension": "switching_cost",
+              "support": "beta",
+              "params": {
+                "alpha": 8.5,
+                "beta": 1.5
+              },
+              "stance": "support",
+              "weight": 1.0,
+              "provenance_id": "prov_user_upload_b2b_retention_dashboard"
+            }
+          ]
+        },
+        {
+          "id": "daily_users",
+          "label": "Daily end users",
+          "type": "existing_user",
+          "weight": 0.5,
+          "trust_level": 3,
+          "influence_level": 2,
+          "vulnerability_level": 3,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 2,
+          "traits": {
+            "workflow_friction_tolerance": 0.45
+          }
+        },
+        {
+          "id": "occasional_users",
+          "label": "Occasional users",
+          "type": "existing_user",
+          "weight": 0.2,
+          "trust_level": 3,
+          "influence_level": 1,
+          "vulnerability_level": 3,
+          "compliance_propensity": 2,
+          "mobilization_capacity": 1
+        }
+      ],
+      "trust_baseline": 0.65,
+      "drift_sensitivity_preset": "conservative"
+    },
+    "provenance": [
+      {
+        "id": "prov_user_upload_b2b_retention_dashboard",
+        "source_type": "user_upload",
+        "applied_to_segments": [
+          "power_admins",
+          "daily_users"
+        ],
+        "license_class": "proprietary"
+      },
+      {
+        "id": "prov_g2_2024_saas_switching_costs",
+        "source_type": "platform_data",
+        "source_url": "https://www.g2.com/research/saas-switching-costs-2024",
+        "applied_to_segments": [
+          "power_admins"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "G2 SaaS Switching Costs benchmark, 2024 edition."
+      },
+      {
+        "id": "prov_gartner_2024_competitor_parity",
+        "source_type": "survey",
+        "source_url": "https://www.gartner.com/en/documents/example-competitor-parity-2024",
+        "applied_to_segments": [
+          "power_admins",
+          "daily_users"
+        ],
+        "license_class": "proprietary"
+      },
+      {
+        "id": "prov_synth_friction_baseline",
+        "source_type": "synthetic",
+        "applied_to_segments": [
+          "daily_users",
+          "occasional_users"
+        ],
+        "license_class": "permissive"
+      },
+      {
+        "id": "prov_regulations_gov_saas_contract_rules",
+        "source_type": "regulatory_filing",
+        "source_url": "https://www.regulations.gov/document/example-saas-contract-rule",
+        "applied_to_segments": [
+          "power_admins"
+        ],
+        "license_class": "public_domain"
+      }
+    ]
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "preset_id": "product/generational_split",
+  "description": "Gen-Z vs Boomer divergence split at 0.35 / 0.35 / 0.30 (Gen-Z / Boomer / middle cohorts) with opposing sentiment defaults. Tests product framings that polarise across age cohorts.",
+  "persona": "product",
+  "scope": "consumer",
+  "region": "US",
+  "expected_risk_tags": [
+    "H-COHORT-SPLIT",
+    "H-BACKLASH"
+  ],
+  "preset_overrides": {
+    "scenario": {
+      "topic": "Consumer product change with strong generational framing implications",
+      "drift_horizon_rounds": 8,
+      "run": {
+        "ensemble_n": 5,
+        "tier": "sanity"
+      },
+      "domain_context": {
+        "market_state": {
+          "segment_split": "gen_z_boomer_middle",
+          "press_age_framing_risk": 0.65
+        }
+      },
+      "assumptions": [
+        "Cohort boundaries hold (no within-cohort fragmentation during the horizon).",
+        "Press picks up the age-framing angle within the first 3 rounds.",
+        "Middle cohorts maintain a neutral position until tipped by external coverage."
+      ],
+      "success_criteria": [
+        "Middle-cohort sentiment stays in the neutral band (|stance| <= 0.2) for at least 5 of 8 rounds.",
+        "No cohort polarisation gap greater than 0.7 stance difference between Gen-Z and Boomer by round 8.",
+        "Backlash mobilisation does not exceed Gen-Z's mobilization_capacity ceiling."
+      ],
+      "failure_modes_to_watch": [
+        "Press age-framing triggers a runaway backlash among Boomers.",
+        "Gen-Z enthusiasm collapses if the launch reads as inauthentic.",
+        "Middle cohorts coalesce against the change once both flanks polarise."
+      ],
+      "audience_segments": [
+        {
+          "id": "gen_z",
+          "label": "Gen-Z (18-27)",
+          "type": "prospect",
+          "weight": 0.35,
+          "trust_level": 3,
+          "influence_level": 4,
+          "vulnerability_level": 3,
+          "compliance_propensity": 2,
+          "mobilization_capacity": 4,
+          "traits": {
+            "ocean": {
+              "openness": 0.72,
+              "conscientiousness": 0.5,
+              "extraversion": 0.55,
+              "agreeableness": 0.52,
+              "neuroticism": 0.5
+            },
+            "values": {
+              "self_direction": 0.78,
+              "stimulation": 0.72,
+              "hedonism": 0.55,
+              "achievement": 0.55,
+              "power": 0.4,
+              "security": 0.45,
+              "conformity": 0.3,
+              "tradition": 0.18,
+              "benevolence": 0.55,
+              "universalism": 0.6
+            }
+          },
+          "priors": [
+            {
+              "dimension": "sentiment",
+              "support": "beta",
+              "params": {
+                "alpha": 7,
+                "beta": 3
+              },
+              "stance": "support",
+              "weight": 1.0,
+              "provenance_id": "prov_pew_2024_gen_z_consumer"
+            }
+          ]
+        },
+        {
+          "id": "boomer",
+          "label": "Boomer (60+)",
+          "type": "existing_user",
+          "weight": 0.35,
+          "trust_level": 3,
+          "influence_level": 3,
+          "vulnerability_level": 3,
+          "compliance_propensity": 4,
+          "mobilization_capacity": 3,
+          "traits": {
+            "ocean": {
+              "openness": 0.32,
+              "conscientiousness": 0.72,
+              "extraversion": 0.5,
+              "agreeableness": 0.55,
+              "neuroticism": 0.45
+            },
+            "values": {
+              "self_direction": 0.45,
+              "stimulation": 0.18,
+              "hedonism": 0.3,
+              "achievement": 0.5,
+              "power": 0.45,
+              "security": 0.72,
+              "conformity": 0.6,
+              "tradition": 0.78,
+              "benevolence": 0.55,
+              "universalism": 0.5
+            }
+          },
+          "priors": [
+            {
+              "dimension": "sentiment",
+              "support": "beta",
+              "params": {
+                "alpha": 3,
+                "beta": 7
+              },
+              "stance": "oppose",
+              "weight": 1.0,
+              "provenance_id": "prov_pew_2024_boomer_consumer"
+            }
+          ]
+        },
+        {
+          "id": "middle_cohorts",
+          "label": "Millennial + Gen-X middle cohorts",
+          "type": "existing_user",
+          "weight": 0.3,
+          "trust_level": 3,
+          "influence_level": 3,
+          "vulnerability_level": 2,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 2,
+          "priors": [
+            {
+              "dimension": "sentiment",
+              "support": "beta",
+              "params": {
+                "alpha": 5,
+                "beta": 5
+              },
+              "stance": "neutral",
+              "weight": 1.0,
+              "provenance_id": "prov_anes_2024_middle_cohort"
+            }
+          ]
+        }
+      ],
+      "trust_baseline": 0.55,
+      "drift_sensitivity_preset": "default"
+    },
+    "provenance": [
+      {
+        "id": "prov_pew_2024_gen_z_consumer",
+        "source_type": "survey",
+        "source_url": "https://www.pewresearch.org/social-trends/2024/gen-z-consumer/",
+        "applied_to_segments": [
+          "gen_z"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Pew Research Center, 2024 Gen-Z Consumer Trends."
+      },
+      {
+        "id": "prov_pew_2024_boomer_consumer",
+        "source_type": "survey",
+        "source_url": "https://www.pewresearch.org/social-trends/2024/boomer-consumer/",
+        "applied_to_segments": [
+          "boomer"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Pew Research Center, 2024 Boomer Consumer Trends."
+      },
+      {
+        "id": "prov_anes_2024_middle_cohort",
+        "source_type": "survey",
+        "source_url": "https://electionstudies.org/data-center/2024-time-series-study/",
+        "applied_to_segments": [
+          "middle_cohorts"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "American National Election Studies, 2024 Time Series Study (middle-cohort cross-tab)."
+      },
+      {
+        "id": "prov_user_upload_consumer_dashboard",
+        "source_type": "user_upload",
+        "applied_to_segments": [
+          "gen_z",
+          "boomer",
+          "middle_cohorts"
+        ],
+        "license_class": "proprietary"
+      },
+      {
+        "id": "prov_synth_generational_sentiment_baseline",
+        "source_type": "synthetic",
+        "applied_to_segments": [
+          "gen_z",
+          "boomer",
+          "middle_cohorts"
+        ],
+        "license_class": "permissive"
+      }
+    ]
+  }
+}

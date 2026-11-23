@@ -1,0 +1,162 @@
+{
+  "preset_id": "creator/burnout_arc",
+  "description": "Mid-career creator after 18 months of grind; fatigue prior 0.65. Tests audience patience under inconsistent output cadence and reduced enthusiasm signals.",
+  "persona": "creator",
+  "scope": "social_media",
+  "region": "US",
+  "expected_risk_tags": [
+    "H-RETENTION",
+    "H-PARASOCIAL",
+    "H-CHURN"
+  ],
+  "preset_overrides": {
+    "scenario": {
+      "topic": "Inconsistent upload cadence after 18 months of sustained output",
+      "drift_horizon_rounds": 12,
+      "run": {
+        "ensemble_n": 5,
+        "tier": "sanity"
+      },
+      "domain_context": {
+        "creator_state": {
+          "fatigue_prior": 0.65,
+          "tenure_months": 18,
+          "upload_consistency": 0.45
+        }
+      },
+      "assumptions": [
+        "Audience composition stable across the 12-round horizon (no major external shock).",
+        "Upload cadence variance is the dominant near-term signal driving sentiment drift.",
+        "Parasocial intensity decays slowly relative to the round horizon."
+      ],
+      "success_criteria": [
+        "Superfan retention >= 0.80 by round 12.",
+        "Regulars churn delta <= 0.20 from baseline.",
+        "Net parasocial signal does not invert (stays positive)."
+      ],
+      "failure_modes_to_watch": [
+        "Silent attrition in regulars while superfans remain visibly loyal.",
+        "Lapsed-viewer re-engagement collapses below replacement.",
+        "Negative drift cascades from regulars into superfans after round 8."
+      ],
+      "audience_segments": [
+        {
+          "id": "superfan_patient",
+          "label": "Patient superfans",
+          "type": "follower_cohort",
+          "weight": 0.2,
+          "trust_level": 5,
+          "influence_level": 4,
+          "vulnerability_level": 3,
+          "compliance_propensity": 3,
+          "mobilization_capacity": 4,
+          "traits": {
+            "parasocial_intensity": 0.78
+          }
+        },
+        {
+          "id": "regulars_attrition",
+          "label": "Regulars at risk of attrition",
+          "type": "follower_cohort",
+          "weight": 0.5,
+          "trust_level": 3,
+          "influence_level": 2,
+          "vulnerability_level": 3,
+          "compliance_propensity": 2,
+          "mobilization_capacity": 2,
+          "traits": {
+            "parasocial_intensity": 0.45,
+            "ocean": {
+              "openness": 0.5,
+              "conscientiousness": 0.58,
+              "extraversion": 0.5,
+              "agreeableness": 0.5,
+              "neuroticism": 0.55
+            }
+          },
+          "priors": [
+            {
+              "dimension": "fatigue",
+              "support": "beta",
+              "params": {
+                "alpha": 6.5,
+                "beta": 3.5
+              },
+              "stance": "oppose",
+              "weight": 1.0,
+              "provenance_id": "prov_socialblade_creator_fatigue"
+            }
+          ]
+        },
+        {
+          "id": "lapsed",
+          "label": "Already lapsed viewers",
+          "type": "lurker_cohort",
+          "weight": 0.3,
+          "trust_level": 2,
+          "influence_level": 1,
+          "vulnerability_level": 4,
+          "compliance_propensity": 1,
+          "mobilization_capacity": 1,
+          "traits": {
+            "parasocial_intensity": 0.22
+          }
+        }
+      ],
+      "trust_baseline": 0.55,
+      "drift_sensitivity_preset": "default"
+    },
+    "provenance": [
+      {
+        "id": "prov_socialblade_creator_fatigue",
+        "source_type": "platform_data",
+        "source_url": "https://socialblade.com/youtube/top/category/people/mostsubscribed",
+        "applied_to_segments": [
+          "regulars_attrition"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Channel cadence & engagement deciles, Social Blade (synth aggregate, accessed 2026-04-01)."
+      },
+      {
+        "id": "prov_pew_creator_economy_2024",
+        "source_type": "survey",
+        "source_url": "https://www.pewresearch.org/internet/2024/creator-economy/",
+        "applied_to_segments": [
+          "superfan_patient",
+          "regulars_attrition"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "Pew Research Creator Economy Survey 2024."
+      },
+      {
+        "id": "prov_user_upload_creator_fatigue_notes",
+        "source_type": "user_upload",
+        "applied_to_segments": [
+          "regulars_attrition",
+          "lapsed"
+        ],
+        "license_class": "proprietary"
+      },
+      {
+        "id": "prov_synth_parasocial_baseline",
+        "source_type": "synthetic",
+        "applied_to_segments": [
+          "superfan_patient",
+          "regulars_attrition",
+          "lapsed"
+        ],
+        "license_class": "permissive"
+      },
+      {
+        "id": "prov_anes_2024_attention",
+        "source_type": "survey",
+        "source_url": "https://electionstudies.org/data-center/2024-time-series-study/",
+        "applied_to_segments": [
+          "lapsed"
+        ],
+        "license_class": "attribution_required",
+        "attribution_string": "American National Election Studies, 2024 Time Series Study."
+      }
+    ]
+  }
+}
